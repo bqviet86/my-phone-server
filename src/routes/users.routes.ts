@@ -2,7 +2,10 @@ import { Router } from 'express'
 
 import {
     changePasswordController,
+    createAddressController,
+    deleteAddressController,
     forgotPasswordController,
+    getAddressController,
     getMeController,
     loginController,
     logoutController,
@@ -10,6 +13,7 @@ import {
     registerController,
     resendVerifyEmailController,
     resetPasswordController,
+    updateAddressController,
     updateAvatarController,
     updateMeController,
     verifyEmailController,
@@ -19,17 +23,20 @@ import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
     accessTokenValidator,
     changePasswordValidator,
+    createAddressValidator,
+    deleteAddressValidator,
     emailVerifyTokenValidator,
     forgotPasswordValidator,
     loginValidator,
     refreshTokenValidator,
     registerValidator,
     resetPasswordValidator,
+    updateAddressValidator,
     updateMeValidator,
     verifiedUserValidator,
     verifyForgotPasswordTokenValidator
 } from '~/middlewares/users.middlewares'
-import { UpdateMeReqBody } from '~/models/requests/User.requests'
+import { UpdateAddressReqBody, UpdateMeReqBody } from '~/models/requests/User.requests'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const usersRouter = Router()
@@ -165,6 +172,69 @@ usersRouter.put(
     verifiedUserValidator,
     changePasswordValidator,
     wrapRequestHandler(changePasswordController)
+)
+
+/**
+ * Description: Create my address
+ * Path: /address
+ * Method: POST
+ * Header: { Authorization: Bearer <access_token> }
+ * Body: CreateAddressReqBody
+ */
+usersRouter.post(
+    '/address',
+    accessTokenValidator,
+    verifiedUserValidator,
+    createAddressValidator,
+    wrapRequestHandler(createAddressController)
+)
+
+/**
+ * Description: Get my address
+ * Path: /address
+ * Method: GET
+ * Header: { Authorization: Bearer <access_token> }
+ */
+usersRouter.get('/address', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(getAddressController))
+
+/**
+ * Description: Update my address
+ * Path: /address/:address_id
+ * Method: PATCH
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: { address_id: string }
+ * Body: UpdateAddressReqBody
+ */
+usersRouter.patch(
+    '/address/:address_id',
+    accessTokenValidator,
+    verifiedUserValidator,
+    updateAddressValidator,
+    filterMiddleware<UpdateAddressReqBody>([
+        'name',
+        'phone_number',
+        'email',
+        'province',
+        'district',
+        'ward',
+        'specific_address'
+    ]),
+    wrapRequestHandler(updateAddressController)
+)
+
+/**
+ * Description: Delete my address
+ * Path: /address/:address_id
+ * Method: DELETE
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: { address_id: string }
+ */
+usersRouter.delete(
+    '/address/:address_id',
+    accessTokenValidator,
+    verifiedUserValidator,
+    deleteAddressValidator,
+    wrapRequestHandler(deleteAddressController)
 )
 
 export default usersRouter

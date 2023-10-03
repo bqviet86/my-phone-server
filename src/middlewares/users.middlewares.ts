@@ -40,6 +40,16 @@ const nameSchema: ParamSchema = {
     }
 }
 
+const emailSchema: ParamSchema = {
+    notEmpty: {
+        errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
+    },
+    isEmail: {
+        errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
+    },
+    trim: true
+}
+
 const passwordSchema: ParamSchema = {
     notEmpty: {
         errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
@@ -181,18 +191,81 @@ const phoneNumberSchema: ParamSchema = {
     trim: true
 }
 
+const addressIdSchema: ParamSchema = {
+    trim: true,
+    custom: {
+        options: async (value: string, { req }) => {
+            if (!ObjectId.isValid(value)) {
+                throw new ErrorWithStatus({
+                    message: USERS_MESSAGES.INVALID_ADDRESS_ID,
+                    status: HTTP_STATUS.BAD_REQUEST
+                })
+            }
+
+            const { user_id } = req.decoded_authorization as TokenPayload
+            const address = await databaseService.addresses.findOne({
+                _id: new ObjectId(value),
+                user_id: new ObjectId(user_id)
+            })
+
+            if (address === null) {
+                throw new ErrorWithStatus({
+                    message: USERS_MESSAGES.ADDRESS_NOT_FOUND,
+                    status: HTTP_STATUS.NOT_FOUND
+                })
+            }
+
+            return true
+        }
+    }
+}
+
+const provinceSchema: ParamSchema = {
+    notEmpty: {
+        errorMessage: USERS_MESSAGES.PROVINCE_IS_REQUIRED
+    },
+    isString: {
+        errorMessage: USERS_MESSAGES.PROVINCE_MUST_BE_A_STRING
+    },
+    trim: true
+}
+
+const districtSchema: ParamSchema = {
+    notEmpty: {
+        errorMessage: USERS_MESSAGES.DISTRICT_IS_REQUIRED
+    },
+    isString: {
+        errorMessage: USERS_MESSAGES.DISTRICT_MUST_BE_A_STRING
+    },
+    trim: true
+}
+
+const wardSchema: ParamSchema = {
+    notEmpty: {
+        errorMessage: USERS_MESSAGES.WARD_IS_REQUIRED
+    },
+    isString: {
+        errorMessage: USERS_MESSAGES.WARD_MUST_BE_A_STRING
+    },
+    trim: true
+}
+
+const specificAddressSchema: ParamSchema = {
+    notEmpty: {
+        errorMessage: USERS_MESSAGES.SPECIFIC_ADDRESS_IS_REQUIRED
+    },
+    isString: {
+        errorMessage: USERS_MESSAGES.SPECIFIC_ADDRESS_MUST_BE_A_STRING
+    },
+    trim: true
+}
+
 export const registerValidator = validate(
     checkSchema(
         {
             name: nameSchema,
             email: {
-                notEmpty: {
-                    errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
-                },
-                isEmail: {
-                    errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
-                },
-                trim: true,
+                ...emailSchema,
                 custom: {
                     options: async (value: string) => {
                         const isExistEmail = await usersServices.checkEmailExist(value)
@@ -219,13 +292,7 @@ export const loginValidator = validate(
     checkSchema(
         {
             email: {
-                notEmpty: {
-                    errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
-                },
-                isEmail: {
-                    errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
-                },
-                trim: true,
+                ...emailSchema,
                 custom: {
                     options: async (value: string, { req }) => {
                         const user = await databaseService.users.findOne({
@@ -405,13 +472,7 @@ export const forgotPasswordValidator = validate(
     checkSchema(
         {
             email: {
-                notEmpty: {
-                    errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
-                },
-                isEmail: {
-                    errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
-                },
-                trim: true,
+                ...emailSchema,
                 custom: {
                     options: async (value: string, { req }) => {
                         const user = await databaseService.users.findOne({
@@ -534,12 +595,70 @@ export const changePasswordValidator = validate(
     )
 )
 
-export const isUserLoggedInValidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        if (req.headers.authorization) {
-            return middleware(req, res, next)
-        }
+export const createAddressValidator = validate(
+    checkSchema(
+        {
+            name: nameSchema,
+            phone_number: phoneNumberSchema,
+            email: emailSchema,
+            province: provinceSchema,
+            district: districtSchema,
+            ward: wardSchema,
+            specific_address: specificAddressSchema
+        },
+        ['body']
+    )
+)
 
-        next()
-    }
-}
+export const updateAddressValidator = validate(
+    checkSchema(
+        {
+            address_id: addressIdSchema,
+            name: {
+                ...nameSchema,
+                optional: true,
+                notEmpty: false
+            },
+            phone_number: {
+                ...phoneNumberSchema,
+                optional: true,
+                notEmpty: false
+            },
+            email: {
+                ...emailSchema,
+                optional: true,
+                notEmpty: false
+            },
+            province: {
+                ...provinceSchema,
+                optional: true,
+                notEmpty: false
+            },
+            district: {
+                ...districtSchema,
+                optional: true,
+                notEmpty: false
+            },
+            ward: {
+                ...wardSchema,
+                optional: true,
+                notEmpty: false
+            },
+            specific_address: {
+                ...specificAddressSchema,
+                optional: true,
+                notEmpty: false
+            }
+        },
+        ['params', 'body']
+    )
+)
+
+export const deleteAddressValidator = validate(
+    checkSchema(
+        {
+            address_id: addressIdSchema
+        },
+        ['params']
+    )
+)
