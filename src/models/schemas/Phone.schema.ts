@@ -5,7 +5,6 @@ interface PhoneType {
     name: string
     price: number
     price_before_discount: number
-    options: ObjectId[]
     image: string
     images: string[]
     infor_detail: string
@@ -41,7 +40,6 @@ export default class Phone {
     name: string
     price: number
     price_before_discount: number
-    options: ObjectId[]
     image: string
     images: string[]
     infor_detail: string
@@ -78,7 +76,6 @@ export default class Phone {
         this.name = phone.name
         this.price = phone.price
         this.price_before_discount = phone.price_before_discount
-        this.options = phone.options
         this.image = phone.image
         this.images = phone.images
         this.infor_detail = phone.infor_detail

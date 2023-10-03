@@ -1,3 +1,4 @@
+import { ParamsDictionary } from 'express-serve-static-core'
 import { JwtPayload } from 'jsonwebtoken'
 
 import { TokenTypes, Sex, UserVerifyStatus } from '~/constants/enums'
@@ -62,4 +63,32 @@ export interface ChangePasswordReqBody {
     old_password: string
     password: string
     confirm_password: string
+}
+
+export interface CreateAddressReqBody {
+    name: string
+    phone_number: string
+    email: string
+    province: string
+    district: string
+    ward: string
+    specific_address: string
+}
+
+export interface UpdateAddressReqParams extends ParamsDictionary {
+    address_id: string
+}
+
+export interface UpdateAddressReqBody {
+    name?: string
+    phone_number?: string
+    email?: string
+    province?: string
+    district?: string
+    ward?: string
+    specific_address?: string
+}
+
+export interface DeleteAddressReqParams extends ParamsDictionary {
+    address_id: string
 }

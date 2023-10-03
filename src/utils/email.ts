@@ -75,11 +75,11 @@ export const sendVerifyRegisterEmail = (
 ) => {
     return sendVerifyEmail(
         toAddress,
-        'Xác thực tài khoản shopee.',
+        'Xác thực tài khoản MyPhone',
         template
-            .replace('{{title}}', 'Xác thực tài khoản của bạn.')
-            .replace('{{content-1}}', 'Cảm ơn bạn đã đăng ký tài khoản trên Shopee.')
-            .replace('{{content-2}}', 'Vui lòng nhấn vào nút bên dưới để xác thực tài khoản của bạn.')
+            .replace('{{title}}', 'Xác thực tài khoản của bạn')
+            .replace('{{content-1}}', 'Cảm ơn bạn đã đăng ký tài khoản trên Myphone!')
+            .replace('{{content-2}}', 'Vui lòng nhấn vào nút bên dưới để xác thực tài khoản của bạn')
             .replace('{{link}}', `${process.env.CLIENT_URL}/email-verifications?token=${email_verify_token}`)
             .replace('{{titleLink}}', 'Xác thực')
     )
@@ -92,11 +92,11 @@ export const sendForgotPasswordEmail = (
 ) => {
     return sendVerifyEmail(
         toAddress,
-        'Xác nhận đặt lại mật khẩu shopee.',
+        'Xác nhận đặt lại mật khẩu MyPhone',
         template
-            .replace('{{title}}', 'Đặt lại mật khẩu của bạn.')
-            .replace('{{content-1}}', 'Bạn đã yêu cầu đặt lại mật khẩu trên Shopee.')
-            .replace('{{content-2}}', 'Nếu là bạn, vui lòng nhấn vào nút bên dưới để đặt lại mật khẩu.')
+            .replace('{{title}}', 'Đặt lại mật khẩu của bạn')
+            .replace('{{content-1}}', 'Bạn đã yêu cầu đặt lại mật khẩu trên Myphone?')
+            .replace('{{content-2}}', 'Nếu là bạn, vui lòng nhấn vào nút bên dưới để đặt lại mật khẩu')
             .replace('{{link}}', `${process.env.CLIENT_URL}/forgot-password?token=${forgot_password_token}`)
             .replace('{{titleLink}}', 'Đặt lại mật khẩu')
     )

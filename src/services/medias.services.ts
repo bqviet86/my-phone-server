@@ -29,6 +29,7 @@ class MediaService {
 
                 // quality: 80%
                 await sharp(file.filepath).jpeg().toFile(newFilepath)
+                sharp.cache(false)
                 await fsPromise.unlink(file.filepath)
 
                 return {

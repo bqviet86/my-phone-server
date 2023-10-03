@@ -7,9 +7,15 @@ import { config } from 'dotenv'
 import { TokenTypes, UserVerifyStatus } from '~/constants/enums'
 import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
 import { USERS_MESSAGES } from '~/constants/messages'
-import { RegisterReqBody, UpdateMeReqBody } from '~/models/requests/User.requests'
+import {
+    RegisterReqBody,
+    UpdateAddressReqBody,
+    UpdateMeReqBody,
+    CreateAddressReqBody
+} from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schema'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
+import Address from '~/models/schemas/Address.schema'
 import databaseService from './database.services'
 import mediaService from './medias.services'
 import { hashPassword } from '~/utils/crypto'
@@ -308,7 +314,7 @@ class UserService {
     async updateAvatar(user_id: string, req: Request) {
         // Xoá avatar cũ
         const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
-        const avatar = user ? user.avatar : ''
+        const avatar = user && user.avatar
 
         if (avatar) {
             const avatar_path = path.resolve(UPLOAD_IMAGE_DIR, avatar)
@@ -379,6 +385,54 @@ class UserService {
         )
 
         return { message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS }
+    }
+
+    async createAddress(user_id: string, payload: CreateAddressReqBody) {
+        const result = await databaseService.addresses.insertOne(
+            new Address({
+                ...payload,
+                user_id: new ObjectId(user_id)
+            })
+        )
+        const address = await databaseService.addresses.findOne({ _id: result.insertedId })
+
+        return address
+    }
+
+    async getAddress(user_id: string) {
+        const addresses = await databaseService.addresses
+            .find({
+                user_id: new ObjectId(user_id)
+            })
+            .toArray()
+
+        return addresses
+    }
+
+    async updateAddress(address_id: string, payload: UpdateAddressReqBody) {
+        const address = await databaseService.addresses.findOneAndUpdate(
+            { _id: new ObjectId(address_id) },
+            {
+                $set: payload,
+                $currentDate: {
+                    updated_at: true
+                }
+            },
+            {
+                returnDocument: 'after',
+                includeResultMetadata: false
+            }
+        )
+
+        return address
+    }
+
+    async deleteAddress(address_id: string) {
+        await databaseService.addresses.deleteOne({
+            _id: new ObjectId(address_id)
+        })
+
+        return { message: USERS_MESSAGES.DELETE_ADDRESS_SUCCESS }
     }
 }
 

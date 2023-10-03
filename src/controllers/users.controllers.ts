@@ -15,9 +15,13 @@ import {
     RegisterReqBody,
     ResetPasswordReqBody,
     TokenPayload,
+    UpdateAddressReqBody,
     UpdateMeReqBody,
     VerifyEmailReqBody,
-    VerifyForgotPasswordReqBody
+    VerifyForgotPasswordReqBody,
+    CreateAddressReqBody,
+    UpdateAddressReqParams,
+    DeleteAddressReqParams
 } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schema'
 import databaseService from '~/services/database.services'
@@ -170,6 +174,49 @@ export const changePasswordController = async (
     const { user_id } = req.decoded_authorization as TokenPayload
     const { password } = req.body
     const result = await usersService.changePassword(user_id, password)
+
+    return res.json(result)
+}
+
+export const createAddressController = async (
+    req: Request<ParamsDictionary, any, CreateAddressReqBody>,
+    res: Response
+) => {
+    const { user_id } = req.decoded_authorization as TokenPayload
+    const result = await usersService.createAddress(user_id, req.body)
+
+    return res.json({
+        message: USERS_MESSAGES.CREATE_ADDRESS_SUCCESS,
+        result
+    })
+}
+
+export const getAddressController = async (req: Request, res: Response) => {
+    const { user_id } = req.decoded_authorization as TokenPayload
+    const result = await usersService.getAddress(user_id)
+
+    return res.json({
+        message: USERS_MESSAGES.GET_ADDRESS_SUCCESS,
+        result
+    })
+}
+
+export const updateAddressController = async (
+    req: Request<UpdateAddressReqParams, any, UpdateAddressReqBody>,
+    res: Response
+) => {
+    const { address_id } = req.params
+    const result = await usersService.updateAddress(address_id, req.body)
+
+    return res.json({
+        message: USERS_MESSAGES.UPDATE_ADDRESS_SUCCESS,
+        result
+    })
+}
+
+export const deleteAddressController = async (req: Request<DeleteAddressReqParams>, res: Response) => {
+    const { address_id } = req.params
+    const result = await usersService.deleteAddress(address_id)
 
     return res.json(result)
 }
