@@ -4,19 +4,24 @@ import {
     changePasswordController,
     createAddressController,
     deleteAddressController,
+    forgotPasswordAdminController,
     forgotPasswordController,
     getAddressController,
     getMeController,
+    loginAdminController,
     loginController,
+    logoutAdminController,
     logoutController,
     refreshTokenController,
     registerController,
     resendVerifyEmailController,
+    resetPasswordAdminController,
     resetPasswordController,
     updateAddressController,
     updateAvatarController,
     updateMeController,
     verifyEmailController,
+    verifyForgotPasswordAdminController,
     verifyForgotPasswordController
 } from '~/controllers/users.controllers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
@@ -27,6 +32,7 @@ import {
     deleteAddressValidator,
     emailVerifyTokenValidator,
     forgotPasswordValidator,
+    isAdminValidator,
     loginValidator,
     refreshTokenValidator,
     registerValidator,
@@ -55,7 +61,6 @@ const usersRouter = Router()
  *    phone_number: string
  * }
  */
-
 usersRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
 
 /**
@@ -236,5 +241,58 @@ usersRouter.delete(
     deleteAddressValidator,
     wrapRequestHandler(deleteAddressController)
 )
+
+// Admin routes
+
+/**
+ * Description: Login admin
+ * Path: /admin/login
+ * Method: POST
+ * Body: { email: string, password: string }
+ */
+usersRouter.post('/admin/login', loginValidator, wrapRequestHandler(loginAdminController))
+
+/**
+ * Description: Logout admin
+ * Path: /admin/logout
+ * Method: POST
+ * Header: { Authorization: Bearer <access_token> }
+ * Body: { refresh_token: string }
+ */
+usersRouter.post(
+    '/admin/logout',
+    accessTokenValidator,
+    refreshTokenValidator,
+    isAdminValidator,
+    wrapRequestHandler(logoutAdminController)
+)
+
+/**
+ * Description: Submit email to reset password, then send email to admin
+ * Path: /admin/forgot-password
+ * Method: POST
+ * Body: { email: string }
+ */
+usersRouter.post('/admin/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordAdminController))
+
+/**
+ * Description: Verify forgot password token when admin click on the link in email
+ * Path: /admin/verify-forgot-password
+ * Method: POST
+ * Body: { forgot_password_token: string }
+ */
+usersRouter.post(
+    '/admin/verify-forgot-password',
+    verifyForgotPasswordTokenValidator,
+    wrapRequestHandler(verifyForgotPasswordAdminController)
+)
+
+/**
+ * Description: Reset password of admin
+ * Path: /admin/reset-password
+ * Method: POST
+ * Body: { forgot_password_token: string, password: string, confirm_password: string }
+ */
+usersRouter.post('/admin/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordAdminController))
 
 export default usersRouter

@@ -41,6 +41,7 @@ export const USERS_MESSAGES = {
     WARD_MUST_BE_A_STRING: 'Phường/Xã phải là một chuỗi',
     SPECIFIC_ADDRESS_IS_REQUIRED: 'Địa chỉ cụ thể không được để trống',
     SPECIFIC_ADDRESS_MUST_BE_A_STRING: 'Địa chỉ cụ thể phải là một chuỗi',
+    USER_NOT_ADMIN: 'Người dùng không phải là admin',
 
     REGISTER_SUCCESS: 'Đăng ký thành công',
     LOGIN_SUCCESS: 'Đăng nhập thành công',

@@ -101,3 +101,20 @@ export const sendForgotPasswordEmail = (
             .replace('{{titleLink}}', 'Đặt lại mật khẩu')
     )
 }
+
+export const sendForgotPasswordAdminEmail = (
+    toAddress: string,
+    forgot_password_token: string,
+    template: string = emailTemplate
+) => {
+    return sendVerifyEmail(
+        toAddress,
+        'Xác nhận đặt lại mật khẩu admin của MyPhone',
+        template
+            .replace('{{title}}', 'Đặt lại mật khẩu admin của bạn')
+            .replace('{{content-1}}', 'Bạn đã yêu cầu đặt lại mật khẩu admin trên Myphone?')
+            .replace('{{content-2}}', 'Nếu là bạn, vui lòng nhấn vào nút bên dưới để đặt lại mật khẩu')
+            .replace('{{link}}', `${process.env.CLIENT_URL}/forgot-password?admin=true&token=${forgot_password_token}`)
+            .replace('{{titleLink}}', 'Đặt lại mật khẩu')
+    )
+}

@@ -3,7 +3,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 
-import { UserVerifyStatus } from '~/constants/enums'
+import { UserRole, UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import {
@@ -39,8 +39,8 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
 }
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
-    const { _id, verify } = req.user as User
-    const result = await usersService.login({ user_id: (_id as ObjectId).toString(), verify })
+    const { _id, verify, role } = req.user as User
+    const result = await usersService.login({ user_id: (_id as ObjectId).toString(), verify, role })
 
     return res.json({
         message: USERS_MESSAGES.LOGIN_SUCCESS,
@@ -97,8 +97,8 @@ export const forgotPasswordController = async (
     req: Request<ParamsDictionary, any, ForgotPasswordReqBody>,
     res: Response
 ) => {
-    const { _id, email, verify } = req.user as User
-    const result = await usersService.forgotPassword({ user_id: (_id as ObjectId).toString(), email, verify })
+    const { _id, email, verify, role } = req.user as User
+    const result = await usersService.forgotPassword({ user_id: (_id as ObjectId).toString(), email, verify, role })
 
     return res.json(result)
 }
@@ -127,9 +127,9 @@ export const refreshTokenController = async (
     req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
     res: Response
 ) => {
-    const { user_id, verify, exp } = req.decoded_refresh_token as TokenPayload
+    const { user_id, verify, role, exp } = req.decoded_refresh_token as TokenPayload
     const { refresh_token } = req.body
-    const result = await usersService.refreshToken({ user_id, verify, exp, refresh_token })
+    const result = await usersService.refreshToken({ user_id, verify, role, exp, refresh_token })
 
     return res.json({
         message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
@@ -217,6 +217,90 @@ export const updateAddressController = async (
 export const deleteAddressController = async (req: Request<DeleteAddressReqParams>, res: Response) => {
     const { address_id } = req.params
     const result = await usersService.deleteAddress(address_id)
+
+    return res.json(result)
+}
+
+export const loginAdminController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
+    const { _id, verify, role } = req.user as User
+
+    if (role !== UserRole.Admin) {
+        return res.status(HTTP_STATUS.FORBIDDEN).json({
+            message: USERS_MESSAGES.USER_NOT_ADMIN
+        })
+    }
+
+    const result = await usersService.login({ user_id: (_id as ObjectId).toString(), verify, role })
+
+    return res.json({
+        message: USERS_MESSAGES.LOGIN_SUCCESS,
+        result
+    })
+}
+
+export const logoutAdminController = async (req: Request<ParamsDictionary, any, LogoutReqBody>, res: Response) => {
+    const { role } = req.decoded_refresh_token as TokenPayload
+    const { refresh_token } = req.body
+
+    if (role !== UserRole.Admin) {
+        return res.status(HTTP_STATUS.FORBIDDEN).json({
+            message: USERS_MESSAGES.USER_NOT_ADMIN
+        })
+    }
+
+    const result = await usersService.logout(refresh_token)
+
+    return res.json(result)
+}
+
+export const forgotPasswordAdminController = async (
+    req: Request<ParamsDictionary, any, ForgotPasswordReqBody>,
+    res: Response
+) => {
+    const { _id, email, verify, role } = req.user as User
+
+    if (role !== UserRole.Admin) {
+        return res.status(HTTP_STATUS.FORBIDDEN).json({
+            message: USERS_MESSAGES.USER_NOT_ADMIN
+        })
+    }
+
+    const result = await usersService.forgotPassword({ user_id: (_id as ObjectId).toString(), email, verify, role })
+
+    return res.json(result)
+}
+
+export const verifyForgotPasswordAdminController = async (
+    req: Request<ParamsDictionary, any, VerifyForgotPasswordReqBody>,
+    res: Response
+) => {
+    const { role } = req.decoded_forgot_password_token as TokenPayload
+
+    if (role !== UserRole.Admin) {
+        return res.status(HTTP_STATUS.FORBIDDEN).json({
+            message: USERS_MESSAGES.USER_NOT_ADMIN
+        })
+    }
+
+    return res.json({
+        message: USERS_MESSAGES.VERIFY_FORGOT_PASSWORD_SUCCESS
+    })
+}
+
+export const resetPasswordAdminController = async (
+    req: Request<ParamsDictionary, any, ResetPasswordReqBody>,
+    res: Response
+) => {
+    const { user_id, role } = req.decoded_forgot_password_token as TokenPayload
+    const { password } = req.body
+
+    if (role !== UserRole.Admin) {
+        return res.status(HTTP_STATUS.FORBIDDEN).json({
+            message: USERS_MESSAGES.USER_NOT_ADMIN
+        })
+    }
+
+    const result = await usersService.resetPassword(user_id, password)
 
     return res.json(result)
 }
