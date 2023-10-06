@@ -8,6 +8,7 @@ interface PhoneOptionType {
     price: number
     price_before_discount: number
     quantity: number
+    images: string[]
     created_at?: Date
     updated_at?: Date
 }
@@ -20,6 +21,7 @@ export default class PhoneOption {
     price: number
     price_before_discount: number
     quantity: number
+    images: string[]
     created_at: Date
     updated_at: Date
 
@@ -33,6 +35,7 @@ export default class PhoneOption {
         this.price = phoneOption.price
         this.price_before_discount = phoneOption.price_before_discount
         this.quantity = phoneOption.quantity
+        this.images = phoneOption.images
         this.created_at = phoneOption.created_at || date
         this.updated_at = phoneOption.updated_at || date
     }

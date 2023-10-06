@@ -1,14 +1,15 @@
 import { Router } from 'express'
+import { createPhoneController } from '~/controllers/phones.controllers'
 
-import { accessTokenValidator, verifiedUserValidator } from '~/middlewares/users.middlewares'
+import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const phonesRouter = Router()
 
-phonesRouter.post(
-    '/',
-    accessTokenValidator,
-    verifiedUserValidator
-    // isAdminValidator,
-    // wrapRequestHandler(createPhoneController)
-)
+/**
+ * Description: Create a new phone
+ * Path: /
+ * Method: POST
+ * Body: CreatePhoneReqBody
+ */
+phonesRouter.post('/', accessTokenValidator, isAdminValidator, wrapRequestHandler(createPhoneController))

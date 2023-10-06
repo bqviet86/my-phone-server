@@ -6,6 +6,7 @@ import { UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_TEMP_DIR } from './constants/dir'
 import { defaultErrorHandler } from '~/middlewares/error.middlewares'
 import usersRouter from '~/routes/users.routes'
 import mediasRouter from './routes/medias.routes'
+import brandsRouter from './routes/brands.routes'
 import staticRouter from './routes/static.routes'
 import databaseService from '~/services/database.services'
 import { initFolder } from './utils/file'
@@ -31,6 +32,7 @@ app.use(cors())
 // Routes
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+app.use('/brands', brandsRouter)
 app.use('/static', staticRouter)
 
 // Error handler

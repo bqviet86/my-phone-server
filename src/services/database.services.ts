@@ -4,6 +4,7 @@ import { config } from 'dotenv'
 import User from '~/models/schemas/User.schema'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import Address from '~/models/schemas/Address.schema'
+import Brand from '~/models/schemas/Brand.schema'
 
 config()
 
@@ -45,6 +46,10 @@ class DatabaseService {
 
     get addresses(): Collection<Address> {
         return this.db.collection(process.env.DB_ADDRESSES_COLLECTION as string)
+    }
+
+    get brands(): Collection<Brand> {
+        return this.db.collection(process.env.DB_BRANDS_COLLECTION as string)
     }
 }
 

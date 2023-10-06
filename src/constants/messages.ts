@@ -73,3 +73,11 @@ export const MEDIAS_MESSAGES = {
     UPLOAD_IMAGE_SUCCESS: 'Tải ảnh lên thành công',
     UPLOAD_VIDEO_SUCCESS: 'Tải video lên thành công'
 }
+
+export const BRANDS_MESSAGES = {
+    NAME_IS_REQUIRED: 'Tên không được để trống',
+    NAME_MUST_BE_A_STRING: 'Tên phải là một chuỗi',
+    NAME_LENGTH_MUST_BE_FROM_1_TO_20: 'Tên phải có độ dài từ 1 đến 20 ký tự',
+
+    CREATE_BRAND_SUCCESS: 'Tạo thương hiệu thành công'
+}
