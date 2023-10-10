@@ -7,6 +7,7 @@ import { defaultErrorHandler } from '~/middlewares/error.middlewares'
 import usersRouter from '~/routes/users.routes'
 import mediasRouter from './routes/medias.routes'
 import brandsRouter from './routes/brands.routes'
+import phonesRouter from './routes/phones.routes'
 import staticRouter from './routes/static.routes'
 import databaseService from '~/services/database.services'
 import { initFolder } from './utils/file'
@@ -33,6 +34,7 @@ app.use(cors())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/brands', brandsRouter)
+app.use('/phones', phonesRouter)
 app.use('/static', staticRouter)
 
 // Error handler

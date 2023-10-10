@@ -9,6 +9,12 @@ class BrandService {
 
         return brand
     }
+
+    async getAllBrands() {
+        const result = await databaseService.brands.find({}).toArray()
+
+        return result
+    }
 }
 
 const brandService = new BrandService()

@@ -1,21 +1,32 @@
 import { Router } from 'express'
 
-import { createBrandController } from '~/controllers/brands.controllers'
+import { createBrandController, getAllBrandController } from '~/controllers/brands.controllers'
 import { createBrandValidator } from '~/middlewares/brands.middlewares'
-import { filterMiddleware } from '~/middlewares/common.middlewares'
 import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
-import { CreateBrandReqBody } from '~/models/requests/Brand.requests'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const brandsRouter = Router()
 
+/**
+ * Description: Create a new brand
+ * Path: /
+ * Method: POST
+ * Header: { Authorization: Bearer <access_token> }
+ * Body: CreateBrandReqBody
+ */
 brandsRouter.post(
     '/',
     accessTokenValidator,
     isAdminValidator,
     createBrandValidator,
-    filterMiddleware<CreateBrandReqBody>(['name']),
     wrapRequestHandler(createBrandController)
 )
+
+/**
+ * Description: Get all brands
+ * Path: /
+ * Method: GET
+ */
+brandsRouter.get('/', wrapRequestHandler(getAllBrandController))
 
 export default brandsRouter

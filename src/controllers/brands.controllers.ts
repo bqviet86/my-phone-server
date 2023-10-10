@@ -13,3 +13,12 @@ export const createBrandController = async (req: Request<ParamsDictionary, any, 
         result
     })
 }
+
+export const getAllBrandController = async (req: Request, res: Response) => {
+    const result = await brandService.getAllBrands()
+
+    return res.json({
+        message: BRANDS_MESSAGES.GET_ALL_BRAND_SUCCESS,
+        result
+    })
+}

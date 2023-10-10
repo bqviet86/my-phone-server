@@ -3,20 +3,18 @@ import { ObjectId } from 'mongodb'
 interface PhoneType {
     _id?: ObjectId
     name: string
-    price: number
+    price: number[]
     price_before_discount: number
     image: string
-    infor_detail: string
+    options: string[]
     description: string
-    brand: ObjectId
-    guarantee?: string
+    brand: string
     screen_type: string
     resolution: string
     operating_system: string
     memory: string
     chip: string
     battery: string
-    battery_technology: string
     rear_camera: string
     front_camera: string
     wifi: string
@@ -30,20 +28,18 @@ interface PhoneType {
 export default class Phone {
     _id?: ObjectId
     name: string
-    price: number
+    price: number[]
     price_before_discount: number
     image: string
-    infor_detail: string
+    options: ObjectId[]
     description: string
     brand: ObjectId
-    guarantee: string
     screen_type: string
     resolution: string
     operating_system: string
     memory: string
     chip: string
     battery: string
-    battery_technology: string
     rear_camera: string
     front_camera: string
     wifi: string
@@ -61,17 +57,15 @@ export default class Phone {
         this.price = phone.price
         this.price_before_discount = phone.price_before_discount
         this.image = phone.image
-        this.infor_detail = phone.infor_detail
+        this.options = phone.options.map((option) => new ObjectId(option))
         this.description = phone.description
-        this.brand = phone.brand
-        this.guarantee = phone.guarantee || '12 tháng'
+        this.brand = new ObjectId(phone.brand)
         this.screen_type = phone.screen_type
         this.resolution = phone.resolution
         this.operating_system = phone.operating_system
         this.memory = phone.memory
         this.chip = phone.chip
         this.battery = phone.battery
-        this.battery_technology = phone.battery_technology
         this.rear_camera = phone.rear_camera
         this.front_camera = phone.front_camera
         this.wifi = phone.wifi

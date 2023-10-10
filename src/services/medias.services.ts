@@ -22,22 +22,21 @@ class MediaService {
         maxFileSize?: number
     }) {
         const files = await handleUploadImage({ req, maxFiles, maxFileSize })
-        const result: Media[] = await Promise.all(
-            files.map(async (file) => {
-                const newFilename = `${getNameFromFilename(file.newFilename)}.jpeg`
-                const newFilepath = path.resolve(UPLOAD_IMAGE_DIR, newFilename)
+        const result: Media[] = []
 
-                // quality: 80%
-                await sharp(file.filepath).jpeg().toFile(newFilepath)
-                sharp.cache(false)
-                await fsPromise.unlink(file.filepath)
+        for (const file of files) {
+            const newFilename = `${getNameFromFilename(file.newFilename)}.jpeg`
+            const newFilepath = path.resolve(UPLOAD_IMAGE_DIR, newFilename)
 
-                return {
-                    url: `http://localhost:${process.env.PORT}/static/image/${newFilename}`,
-                    type: MediaTypes.Image
-                }
+            await sharp(file.filepath).jpeg({ quality: 100 }).toFile(newFilepath)
+            sharp.cache(false)
+            await fsPromise.unlink(file.filepath)
+
+            result.push({
+                url: `http://localhost:${process.env.PORT}/static/image/${newFilename}`,
+                type: MediaTypes.Image
             })
-        )
+        }
 
         return result
     }

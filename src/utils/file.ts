@@ -38,6 +38,7 @@ export const handleUploadImage = ({
     const form = formidable({
         uploadDir: UPLOAD_IMAGE_TEMP_DIR,
         keepExtensions: true,
+        multiples: true,
         maxFiles,
         maxFileSize,
         maxTotalFileSize: maxFiles * maxFileSize,

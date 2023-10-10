@@ -5,6 +5,8 @@ import User from '~/models/schemas/User.schema'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import Address from '~/models/schemas/Address.schema'
 import Brand from '~/models/schemas/Brand.schema'
+import PhoneOption from '~/models/schemas/PhoneOption.schema'
+import Phone from '~/models/schemas/Phone.schema'
 
 config()
 
@@ -50,6 +52,14 @@ class DatabaseService {
 
     get brands(): Collection<Brand> {
         return this.db.collection(process.env.DB_BRANDS_COLLECTION as string)
+    }
+
+    get phoneOptions(): Collection<PhoneOption> {
+        return this.db.collection(process.env.DB_PHONE_OPTIONS_COLLECTION as string)
+    }
+
+    get phones(): Collection<Phone> {
+        return this.db.collection(process.env.DB_PHONES_COLLECTION as string)
     }
 }
 

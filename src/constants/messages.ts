@@ -79,5 +79,16 @@ export const BRANDS_MESSAGES = {
     NAME_MUST_BE_A_STRING: 'Tên phải là một chuỗi',
     NAME_LENGTH_MUST_BE_FROM_1_TO_20: 'Tên phải có độ dài từ 1 đến 20 ký tự',
 
-    CREATE_BRAND_SUCCESS: 'Tạo thương hiệu thành công'
+    CREATE_BRAND_SUCCESS: 'Tạo thương hiệu thành công',
+    GET_ALL_BRAND_SUCCESS: 'Lấy tất cả thương hiệu thành công'
+}
+
+export const PHONES_MESSAGES = {
+    CREATE_PHONE_OPTION_SUCCESSFULLY: 'Tạo option cho điện thoại thành công',
+    UPDATE_PHONE_OPTION_SUCCESSFULLY: 'Cập nhật option của điện thoại thành công',
+    DELETE_PHONE_OPTION_SUCCESSFULLY: 'Xóa option của điện thoại thành công',
+    CREATE_PHONE_SUCCESSFULLY: 'Tạo điện thoại thành công',
+    GET_PHONE_SUCCESSFULLY: 'Lấy điện thoại thành công',
+    UPDATE_PHONE_SUCCESSFULLY: 'Cập nhật điện thoại thành công',
+    DELETE_PHONE_SUCCESSFULLY: 'Xóa điện thoại thành công'
 }

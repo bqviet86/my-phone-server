@@ -2,7 +2,6 @@ import { ObjectId } from 'mongodb'
 
 interface PhoneOptionType {
     _id?: ObjectId
-    phone_id: ObjectId
     color: string
     capacity: string
     price: number
@@ -15,7 +14,6 @@ interface PhoneOptionType {
 
 export default class PhoneOption {
     _id?: ObjectId
-    phone_id: ObjectId
     color: string
     capacity: string
     price: number
@@ -29,7 +27,6 @@ export default class PhoneOption {
         const date = new Date()
 
         this._id = phoneOption._id
-        this.phone_id = phoneOption.phone_id
         this.color = phoneOption.color
         this.capacity = phoneOption.capacity
         this.price = phoneOption.price
