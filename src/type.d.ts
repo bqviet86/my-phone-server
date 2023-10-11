@@ -1,6 +1,9 @@
 import { Request } from 'express'
 
 import User from './models/schemas/User.schema'
+import PhoneOption from './models/schemas/PhoneOption.schema'
+import Brand from './models/schemas/Brand.schema'
+import Phone from './models/schemas/Phone.schema'
 import { TokenPayload } from './models/requests/User.requests'
 
 declare module 'express' {
@@ -10,5 +13,8 @@ declare module 'express' {
         decoded_refresh_token?: TokenPayload
         decoded_email_verify_token?: TokenPayload
         decoded_forgot_password_token?: TokenPayload
+        phone_options?: PhoneOption[]
+        brand?: Brand
+        phone?: Phone
     }
 }

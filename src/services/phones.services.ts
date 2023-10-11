@@ -9,6 +9,7 @@ import {
 } from '~/models/requests/Phone.requests'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import Phone from '~/models/schemas/Phone.schema'
+import Brand from '~/models/schemas/Brand.schema'
 import databaseService from './database.services'
 
 class PhoneService {
@@ -78,16 +79,17 @@ class PhoneService {
         return { price, price_before_discount }
     }
 
-    async createPhone(payload: CreatePhoneReqBody) {
-        // Lấy ra các options
-        const options = await databaseService.phoneOptions
-            .find<PhoneOption>({
-                _id: {
-                    $in: payload.options.map((option) => new ObjectId(option))
-                }
-            })
-            .toArray()
-        const { price, price_before_discount } = this.createPriceAndPriceBeforeDiscount(options)
+    async createPhone({
+        phone_options,
+        brand,
+        payload
+    }: {
+        phone_options: PhoneOption[]
+        brand: Brand
+        payload: CreatePhoneReqBody
+    }) {
+        // Tạo giá và giá gốc
+        const { price, price_before_discount } = this.createPriceAndPriceBeforeDiscount(phone_options)
 
         // Tạo phone
         const result = await databaseService.phones.insertOne(
@@ -107,19 +109,9 @@ class PhoneService {
                     }
                 },
                 {
-                    $lookup: {
-                        from: 'brands',
-                        localField: 'brand',
-                        foreignField: '_id',
-                        as: 'brand'
-                    }
-                },
-                {
-                    $unwind: '$brand'
-                },
-                {
                     $addFields: {
-                        options
+                        brand,
+                        options: phone_options
                     }
                 }
             ])
@@ -128,51 +120,17 @@ class PhoneService {
         return phone
     }
 
-    async getPhone(phone_id: string) {
-        const [phone] = await databaseService.phones
-            .aggregate<Phone>([
-                {
-                    $match: {
-                        _id: new ObjectId(phone_id)
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'brands',
-                        localField: 'brand',
-                        foreignField: '_id',
-                        as: 'brand'
-                    }
-                },
-                {
-                    $unwind: '$brand'
-                },
-                {
-                    $lookup: {
-                        from: 'phone_options',
-                        localField: 'options',
-                        foreignField: '_id',
-                        as: 'options'
-                    }
-                }
-            ])
-            .toArray()
-
-        return phone
-    }
-
-    async updatePhone(phone_id: string, payload: UpdatePhoneReqBody) {
-        const optionIds = (payload.options || []).map((option) => new ObjectId(option))
-
-        // Lấy ra các options
-        const options = await databaseService.phoneOptions
-            .find<PhoneOption>({
-                _id: {
-                    $in: optionIds
-                }
-            })
-            .toArray()
-        const { price, price_before_discount } = this.createPriceAndPriceBeforeDiscount(options)
+    async updatePhone({
+        phone_id,
+        phone_options,
+        payload
+    }: {
+        phone_id: string
+        phone_options: PhoneOption[]
+        payload: UpdatePhoneReqBody
+    }) {
+        // Tạo giá và giá gốc
+        const { price, price_before_discount } = this.createPriceAndPriceBeforeDiscount(phone_options)
 
         // Update phone
         const result = await databaseService.phones.findOneAndUpdate(
@@ -182,7 +140,7 @@ class PhoneService {
             {
                 $set: {
                     ...payload,
-                    options: optionIds,
+                    options: (payload.options || []).map((option) => new ObjectId(option)),
                     brand: new ObjectId(payload.brand),
                     price,
                     price_before_discount

@@ -10,6 +10,15 @@ import {
     updatePhoneOptionController
 } from '~/controllers/phones.controllers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
+import {
+    createPhoneOptionValidator,
+    createPhoneValidator,
+    deletePhoneOptionValidator,
+    deletePhoneValidator,
+    getPhoneValidator,
+    updatePhoneOptionValidator,
+    updatePhoneValidator
+} from '~/middlewares/phones.middlewares'
 import { accessTokenValidator, isAdminValidator, verifiedUserValidator } from '~/middlewares/users.middlewares'
 import { UpdatePhoneOptionReqBody } from '~/models/requests/Phone.requests'
 import { wrapRequestHandler } from '~/utils/handlers'
@@ -23,7 +32,13 @@ const phonesRouter = Router()
  * Header: { Authorization: Bearer <access_token> }
  * Body: CreatePhoneOptionReqBody
  */
-phonesRouter.post('/options', accessTokenValidator, isAdminValidator, wrapRequestHandler(createPhoneOptionController))
+phonesRouter.post(
+    '/options',
+    accessTokenValidator,
+    isAdminValidator,
+    createPhoneOptionValidator,
+    wrapRequestHandler(createPhoneOptionController)
+)
 
 /**
  * Description: Update a phone option
@@ -37,6 +52,7 @@ phonesRouter.patch(
     '/options/:phone_option_id',
     accessTokenValidator,
     isAdminValidator,
+    updatePhoneOptionValidator,
     filterMiddleware<UpdatePhoneOptionReqBody>([
         'color',
         'capacity',
@@ -59,6 +75,7 @@ phonesRouter.delete(
     '/options/:phone_option_id',
     accessTokenValidator,
     isAdminValidator,
+    deletePhoneOptionValidator,
     wrapRequestHandler(deletePhoneOptionController)
 )
 
@@ -69,7 +86,13 @@ phonesRouter.delete(
  * Header: { Authorization: Bearer <access_token> }
  * Body: CreatePhoneReqBody
  */
-phonesRouter.post('/', accessTokenValidator, isAdminValidator, wrapRequestHandler(createPhoneController))
+phonesRouter.post(
+    '/',
+    accessTokenValidator,
+    isAdminValidator,
+    createPhoneValidator,
+    wrapRequestHandler(createPhoneController)
+)
 
 /**
  * Description: Get a phone
@@ -78,7 +101,13 @@ phonesRouter.post('/', accessTokenValidator, isAdminValidator, wrapRequestHandle
  * Header: { Authorization: Bearer <access_token> }
  * Params: GetPhoneReqParams
  */
-phonesRouter.get('/:phone_id', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(getPhoneController))
+phonesRouter.get(
+    '/:phone_id',
+    accessTokenValidator,
+    verifiedUserValidator,
+    getPhoneValidator,
+    wrapRequestHandler(getPhoneController)
+)
 
 /**
  * Description: Update a phone
@@ -88,7 +117,13 @@ phonesRouter.get('/:phone_id', accessTokenValidator, verifiedUserValidator, wrap
  * Params: UpdatePhoneReqParams
  * Body: UpdatePhoneReqBody
  */
-phonesRouter.patch('/:phone_id', accessTokenValidator, isAdminValidator, wrapRequestHandler(updatePhoneController))
+phonesRouter.patch(
+    '/:phone_id',
+    accessTokenValidator,
+    isAdminValidator,
+    updatePhoneValidator,
+    wrapRequestHandler(updatePhoneController)
+)
 
 /**
  * Description: Delete a phone
@@ -97,6 +132,12 @@ phonesRouter.patch('/:phone_id', accessTokenValidator, isAdminValidator, wrapReq
  * Header: { Authorization: Bearer <access_token> }
  * Params: DeletePhoneReqParams
  */
-phonesRouter.delete('/:phone_id', accessTokenValidator, isAdminValidator, wrapRequestHandler(deletePhoneController))
+phonesRouter.delete(
+    '/:phone_id',
+    accessTokenValidator,
+    isAdminValidator,
+    deletePhoneValidator,
+    wrapRequestHandler(deletePhoneController)
+)
 
 export default phonesRouter

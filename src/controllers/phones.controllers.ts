@@ -13,6 +13,9 @@ import {
     UpdatePhoneReqBody,
     UpdatePhoneReqParams
 } from '~/models/requests/Phone.requests'
+import Brand from '~/models/schemas/Brand.schema'
+import Phone from '~/models/schemas/Phone.schema'
+import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import phoneService from '~/services/phones.services'
 
 export const createPhoneOptionController = async (
@@ -48,7 +51,9 @@ export const deletePhoneOptionController = async (req: Request<DeletePhoneOption
 }
 
 export const createPhoneController = async (req: Request<ParamsDictionary, any, CreatePhoneReqBody>, res: Response) => {
-    const result = await phoneService.createPhone(req.body)
+    const phone_options = req.phone_options as PhoneOption[]
+    const brand = req.brand as Brand
+    const result = await phoneService.createPhone({ phone_options, brand, payload: req.body })
 
     return res.json({
         message: PHONES_MESSAGES.CREATE_PHONE_SUCCESSFULLY,
@@ -56,13 +61,12 @@ export const createPhoneController = async (req: Request<ParamsDictionary, any, 
     })
 }
 
-export const getPhoneController = async (req: Request<GetPhoneReqParams>, res: Response) => {
-    const { phone_id } = req.params
-    const result = await phoneService.getPhone(phone_id)
+export const getPhoneController = (req: Request<GetPhoneReqParams>, res: Response) => {
+    const phone = req.phone as Phone
 
     return res.json({
         message: PHONES_MESSAGES.GET_PHONE_SUCCESSFULLY,
-        result
+        result: phone
     })
 }
 
@@ -71,7 +75,8 @@ export const updatePhoneController = async (
     res: Response
 ) => {
     const { phone_id } = req.params
-    const result = await phoneService.updatePhone(phone_id, req.body)
+    const phone_options = req.phone_options as PhoneOption[]
+    const result = await phoneService.updatePhone({ phone_id, phone_options, payload: req.body })
 
     return res.json({
         message: PHONES_MESSAGES.UPDATE_PHONE_SUCCESSFULLY,
