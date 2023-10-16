@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { addToCartController } from '~/controllers/carts.controllers'
-import { addToCartValidator } from '~/middlewares/carts.middlewares'
+import { addToCartController, getCartController } from '~/controllers/carts.controllers'
+import { addToCartValidator, isPhoneOptionIdMatched } from '~/middlewares/carts.middlewares'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -14,6 +14,20 @@ const cartsRouter = Router()
  * Header: { Authorization: Bearer <access_token> }
  * Body: AddToCartReqBody
  */
-cartsRouter.post('/', accessTokenValidator, addToCartValidator, wrapRequestHandler(addToCartController))
+cartsRouter.post(
+    '/',
+    accessTokenValidator,
+    addToCartValidator,
+    isPhoneOptionIdMatched,
+    wrapRequestHandler(addToCartController)
+)
+
+/**
+ * Description: Get cart
+ * Path: /
+ * Method: GET
+ * Header: { Authorization: Bearer <access_token> }
+ */
+cartsRouter.get('/', accessTokenValidator, wrapRequestHandler(getCartController))
 
 export default cartsRouter

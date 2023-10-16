@@ -168,5 +168,6 @@ export const CARTS_MESSAGES = {
     QUANTITY_IS_REQUIRED: 'Số lượng không được để trống',
     QUANTITY_MUST_BE_A_NUMBER: 'Số lượng phải là một số',
 
-    ADD_TO_CART_SUCCESSFULLY: 'Thêm vào giỏ hàng thành công'
+    ADD_TO_CART_SUCCESSFULLY: 'Thêm vào giỏ hàng thành công',
+    GET_CART_SUCCESSFULLY: 'Lấy giỏ hàng thành công'
 }

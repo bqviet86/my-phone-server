@@ -23,7 +23,7 @@ export const filterMiddleware =
 export const phoneOptionIdSchema: ParamSchema = {
     trim: true,
     custom: {
-        options: async (value: string) => {
+        options: async (value: string, { req }) => {
             if (!ObjectId.isValid(value)) {
                 throw new ErrorWithStatus({
                     message: PHONES_MESSAGES.INVALID_PHONE_OPTION_ID,
@@ -41,6 +41,8 @@ export const phoneOptionIdSchema: ParamSchema = {
                     status: HTTP_STATUS.NOT_FOUND
                 })
             }
+
+            ;(req as Request).phone_option = phone_option
 
             return true
         }

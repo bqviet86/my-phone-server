@@ -31,6 +31,75 @@ class CartService {
 
         return cart
     }
+
+    async getCart(user_id: string) {
+        const carts = await databaseService.carts
+            .aggregate<Cart>([
+                {
+                    $match: {
+                        user_id: new ObjectId(user_id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'phones',
+                        localField: 'phone_id',
+                        foreignField: '_id',
+                        as: 'phone'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'phone_options',
+                        localField: 'phone_option_id',
+                        foreignField: '_id',
+                        as: 'phone_option'
+                    }
+                },
+                {
+                    $unwind: '$phone'
+                },
+                {
+                    $unwind: '$phone_option'
+                },
+                {
+                    $lookup: {
+                        from: 'brands',
+                        localField: 'phone.brand',
+                        foreignField: '_id',
+                        as: 'phone.brand'
+                    }
+                },
+                {
+                    $unwind: '$phone.brand'
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        phone: {
+                            _id: 1,
+                            name: 1,
+                            brand: 1
+                        },
+                        phone_option: {
+                            _id: 1,
+                            color: 1,
+                            capacity: 1,
+                            price: 1,
+                            price_before_discount: 1,
+                            images: 1
+                        },
+                        quantity: 1,
+                        total_price: 1,
+                        created_at: 1,
+                        updated_at: 1
+                    }
+                }
+            ])
+            .toArray()
+
+        return carts
+    }
 }
 
 const cartService = new CartService()

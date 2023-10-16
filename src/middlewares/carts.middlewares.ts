@@ -1,8 +1,14 @@
+import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
+import { ObjectId } from 'mongodb'
 
-import { phoneIdSchema, phoneOptionIdSchema } from './common.middlewares'
-import { validate } from '~/utils/validation'
+import HTTP_STATUS from '~/constants/httpStatus'
 import { CARTS_MESSAGES } from '~/constants/messages'
+import { phoneIdSchema, phoneOptionIdSchema } from './common.middlewares'
+import Phone from '~/models/schemas/Phone.schema'
+import PhoneOption from '~/models/schemas/PhoneOption.schema'
+import { ErrorWithStatus } from '~/models/Errors'
+import { validate } from '~/utils/validation'
 
 export const addToCartValidator = validate(
     checkSchema(
@@ -37,3 +43,27 @@ export const addToCartValidator = validate(
         ['body']
     )
 )
+
+export const isPhoneOptionIdMatched = (req: Request, res: Response, next: NextFunction) => {
+    const phone = req.phone as Phone
+    const { phone_option_id } = req.body
+    let phone_option_matched: PhoneOption | null = null
+
+    for (const option of phone.options as unknown as PhoneOption[]) {
+        if ((option._id as ObjectId).equals(phone_option_id)) {
+            phone_option_matched = option
+            break
+        }
+    }
+
+    if (phone_option_matched === null) {
+        return next(
+            new ErrorWithStatus({
+                message: CARTS_MESSAGES.INVALID_PHONE_OPTION_ID,
+                status: HTTP_STATUS.BAD_REQUEST
+            })
+        )
+    }
+
+    next()
+}
