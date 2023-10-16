@@ -120,11 +120,11 @@ class PhoneService {
         return phone
     }
 
-    async getAllPhones({ page, limit, brands }: { page: number; limit: number; brands: string[] }) {
+    async getAllPhones({ page, limit, brands }: { page: number; limit: number; brands: Brand[] }) {
         const $match = {
             ...(brands.length > 0 && {
                 brand: {
-                    $in: brands.map((brand) => new ObjectId(brand))
+                    $in: brands.map((brand) => brand._id as ObjectId)
                 }
             })
         }

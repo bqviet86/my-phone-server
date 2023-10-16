@@ -520,11 +520,12 @@ export const getAllPhonesValidator = validate(
                 }
             },
             brands: {
-                isArray: true,
                 optional: true,
                 custom: {
-                    options: async (value: string[], { req }) => {
-                        if (value.length > 0 && !value.every((item) => ObjectId.isValid(item))) {
+                    options: async (value: string, { req }) => {
+                        const brandValues = value ? value.split('|') : []
+
+                        if (brandValues.length > 0 && !brandValues.every((item) => ObjectId.isValid(item))) {
                             throw new ErrorWithStatus({
                                 message: PHONES_MESSAGES.INVALID_BRAND_ID,
                                 status: HTTP_STATUS.BAD_REQUEST
@@ -533,27 +534,29 @@ export const getAllPhonesValidator = validate(
 
                         const brands = await databaseService.brands
                             .find({
-                                ...(value.length > 0 && {
+                                ...(brandValues.length > 0 && {
                                     _id: {
-                                        $in: value.map((item) => new ObjectId(item))
+                                        $in: brandValues.map((item) => new ObjectId(item))
                                     }
                                 })
                             })
                             .toArray()
 
-                        if (brands.length !== value.length) {
+                        if (brandValues.length > 0 && brands.length !== brandValues.length) {
                             throw new ErrorWithStatus({
                                 message: PHONES_MESSAGES.BRAND_NOT_FOUND,
                                 status: HTTP_STATUS.NOT_FOUND
                             })
                         }
 
+                        ;(req as Request).brands = brands
+
                         return true
                     }
                 }
             }
         },
-        ['query', 'body']
+        ['query']
     )
 )
 

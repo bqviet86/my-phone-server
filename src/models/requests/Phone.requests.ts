@@ -53,10 +53,7 @@ export interface GetPhoneReqParams extends ParamsDictionary {
 export interface GetAllPhonesReqQuery extends Query {
     page: string
     limit: string
-}
-
-export interface GetAllPhonesReqBody {
-    brands?: string[]
+    brands?: string
 }
 
 export interface UpdatePhoneReqParams extends ParamsDictionary {

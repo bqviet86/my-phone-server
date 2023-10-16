@@ -16,6 +16,7 @@ declare module 'express' {
         phone_option?: PhoneOption
         phone_options?: PhoneOption[]
         brand?: Brand
+        brands?: Brand[]
         phone?: Phone
     }
 }

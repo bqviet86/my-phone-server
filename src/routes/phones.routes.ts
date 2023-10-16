@@ -108,8 +108,11 @@ phonesRouter.get('/:phone_id', getPhoneValidator, wrapRequestHandler(getPhoneCon
  * Description: Get all phones
  * Path: /
  * Method: GET
- * Query: GetAllPhonesReqQuery
- * Body: GetAllPhonesReqBody
+ * Query: {
+ *     page: '1',
+ *     limit: '10',
+ *     brands: '_id1|_id2|_id3' or ''
+ * }
  */
 phonesRouter.get('/', getAllPhonesValidator, wrapRequestHandler(getAllPhonesController))
 
