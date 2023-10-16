@@ -5,6 +5,7 @@ import {
     createPhoneOptionController,
     deletePhoneController,
     deletePhoneOptionController,
+    getAllPhonesController,
     getPhoneController,
     updatePhoneController,
     updatePhoneOptionController
@@ -19,8 +20,8 @@ import {
     updatePhoneOptionValidator,
     updatePhoneValidator
 } from '~/middlewares/phones.middlewares'
-import { accessTokenValidator, isAdminValidator, verifiedUserValidator } from '~/middlewares/users.middlewares'
-import { UpdatePhoneOptionReqBody } from '~/models/requests/Phone.requests'
+import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
+import { UpdatePhoneOptionReqBody, UpdatePhoneReqBody } from '~/models/requests/Phone.requests'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const phonesRouter = Router()
@@ -101,13 +102,17 @@ phonesRouter.post(
  * Header: { Authorization: Bearer <access_token> }
  * Params: GetPhoneReqParams
  */
-phonesRouter.get(
-    '/:phone_id',
-    accessTokenValidator,
-    verifiedUserValidator,
-    getPhoneValidator,
-    wrapRequestHandler(getPhoneController)
-)
+phonesRouter.get('/:phone_id', getPhoneValidator, wrapRequestHandler(getPhoneController))
+
+/**
+ * Description: Get all phones
+ * Path: /
+ * Method: GET
+ * Header: { Authorization: Bearer <access_token> }
+ * Query: GetAllPhonesReqQuery
+ * Body: GetAllPhonesReqBody
+ */
+phonesRouter.get('/', wrapRequestHandler(getAllPhonesController))
 
 /**
  * Description: Update a phone
@@ -122,6 +127,25 @@ phonesRouter.patch(
     accessTokenValidator,
     isAdminValidator,
     updatePhoneValidator,
+    filterMiddleware<UpdatePhoneReqBody>([
+        'name',
+        'image',
+        'options',
+        'description',
+        'brand',
+        'screen_type',
+        'resolution',
+        'operating_system',
+        'memory',
+        'chip',
+        'battery',
+        'rear_camera',
+        'front_camera',
+        'wifi',
+        'jack_phone',
+        'size',
+        'weight'
+    ]),
     wrapRequestHandler(updatePhoneController)
 )
 

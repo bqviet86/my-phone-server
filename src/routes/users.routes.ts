@@ -39,7 +39,6 @@ import {
     resetPasswordValidator,
     updateAddressValidator,
     updateMeValidator,
-    verifiedUserValidator,
     verifyForgotPasswordTokenValidator
 } from '~/middlewares/users.middlewares'
 import { UpdateAddressReqBody, UpdateMeReqBody } from '~/models/requests/User.requests'
@@ -146,7 +145,7 @@ usersRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController)
  * Method: PATCH
  * Body: { image: max 1 file }
  */
-usersRouter.patch('/avatar', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(updateAvatarController))
+usersRouter.patch('/avatar', accessTokenValidator, wrapRequestHandler(updateAvatarController))
 
 /**
  * Description: Update my info
@@ -158,7 +157,6 @@ usersRouter.patch('/avatar', accessTokenValidator, verifiedUserValidator, wrapRe
 usersRouter.patch(
     '/me',
     accessTokenValidator,
-    verifiedUserValidator,
     updateMeValidator,
     filterMiddleware<UpdateMeReqBody>(['name', 'date_of_birth', 'sex', 'phone_number']),
     wrapRequestHandler(updateMeController)
@@ -174,7 +172,6 @@ usersRouter.patch(
 usersRouter.put(
     '/change-password',
     accessTokenValidator,
-    verifiedUserValidator,
     changePasswordValidator,
     wrapRequestHandler(changePasswordController)
 )
@@ -186,13 +183,7 @@ usersRouter.put(
  * Header: { Authorization: Bearer <access_token> }
  * Body: CreateAddressReqBody
  */
-usersRouter.post(
-    '/address',
-    accessTokenValidator,
-    verifiedUserValidator,
-    createAddressValidator,
-    wrapRequestHandler(createAddressController)
-)
+usersRouter.post('/address', accessTokenValidator, createAddressValidator, wrapRequestHandler(createAddressController))
 
 /**
  * Description: Get my address
@@ -200,7 +191,7 @@ usersRouter.post(
  * Method: GET
  * Header: { Authorization: Bearer <access_token> }
  */
-usersRouter.get('/address', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(getAddressController))
+usersRouter.get('/address', accessTokenValidator, wrapRequestHandler(getAddressController))
 
 /**
  * Description: Update my address
@@ -213,7 +204,6 @@ usersRouter.get('/address', accessTokenValidator, verifiedUserValidator, wrapReq
 usersRouter.patch(
     '/address/:address_id',
     accessTokenValidator,
-    verifiedUserValidator,
     updateAddressValidator,
     filterMiddleware<UpdateAddressReqBody>([
         'name',
@@ -237,7 +227,6 @@ usersRouter.patch(
 usersRouter.delete(
     '/address/:address_id',
     accessTokenValidator,
-    verifiedUserValidator,
     deleteAddressValidator,
     wrapRequestHandler(deleteAddressController)
 )

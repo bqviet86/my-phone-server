@@ -4,8 +4,8 @@ import { ObjectId } from 'mongodb'
 
 import HTTP_STATUS from '~/constants/httpStatus'
 import { PHONES_MESSAGES } from '~/constants/messages'
+import { phoneIdSchema, phoneOptionIdSchema } from './common.middlewares'
 import { ErrorWithStatus } from '~/models/Errors'
-import Phone from '~/models/schemas/Phone.schema'
 import databaseService from '~/services/database.services'
 import { validate } from '~/utils/validation'
 
@@ -44,24 +44,21 @@ const capacitySchema: ParamSchema = {
 }
 
 const priceSchema: ParamSchema = {
-    isNumeric: {
+    isInt: {
         errorMessage: PHONES_MESSAGES.PRICE_MUST_BE_A_NUMBER
-    },
-    toInt: true
+    }
 }
 
 const priceBeforeDiscountSchema: ParamSchema = {
-    isNumeric: {
+    isInt: {
         errorMessage: PHONES_MESSAGES.PRICE_BEFORE_DISCOUNT_MUST_BE_A_NUMBER
-    },
-    toInt: true
+    }
 }
 
 const quantitySchema: ParamSchema = {
-    isNumeric: {
+    isInt: {
         errorMessage: PHONES_MESSAGES.QUANTITY_MUST_BE_A_NUMBER
-    },
-    toInt: true
+    }
 }
 
 const imagesSchema: ParamSchema = {
@@ -86,87 +83,6 @@ const imagesSchema: ParamSchema = {
         }
     },
     errorMessage: PHONES_MESSAGES.IMAGES_MUST_BE_AN_ARRAY_OF_STRING
-}
-
-const phoneOptionIdSchema: ParamSchema = {
-    trim: true,
-    custom: {
-        options: async (value: string) => {
-            if (!ObjectId.isValid(value)) {
-                throw new ErrorWithStatus({
-                    message: PHONES_MESSAGES.INVALID_PHONE_OPTION_ID,
-                    status: HTTP_STATUS.BAD_REQUEST
-                })
-            }
-
-            const phone_option = await databaseService.phoneOptions.findOne({
-                _id: new ObjectId(value)
-            })
-
-            if (phone_option === null) {
-                throw new ErrorWithStatus({
-                    message: PHONES_MESSAGES.PHONE_OPTION_NOT_FOUND,
-                    status: HTTP_STATUS.NOT_FOUND
-                })
-            }
-
-            return true
-        }
-    }
-}
-
-const phoneIdSchema: ParamSchema = {
-    trim: true,
-    custom: {
-        options: async (value: string, { req }) => {
-            if (!ObjectId.isValid(value)) {
-                throw new ErrorWithStatus({
-                    message: PHONES_MESSAGES.INVALID_PHONE_ID,
-                    status: HTTP_STATUS.BAD_REQUEST
-                })
-            }
-
-            const [phone] = await databaseService.phones
-                .aggregate<Phone>([
-                    {
-                        $match: {
-                            _id: new ObjectId(value)
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: 'brands',
-                            localField: 'brand',
-                            foreignField: '_id',
-                            as: 'brand'
-                        }
-                    },
-                    {
-                        $unwind: '$brand'
-                    },
-                    {
-                        $lookup: {
-                            from: 'phone_options',
-                            localField: 'options',
-                            foreignField: '_id',
-                            as: 'options'
-                        }
-                    }
-                ])
-                .toArray()
-
-            if (phone === undefined) {
-                throw new ErrorWithStatus({
-                    message: PHONES_MESSAGES.PHONE_NOT_FOUND,
-                    status: HTTP_STATUS.NOT_FOUND
-                })
-            }
-
-            ;(req as Request).phone = phone
-
-            return true
-        }
-    }
 }
 
 const nameSchema: ParamSchema = {

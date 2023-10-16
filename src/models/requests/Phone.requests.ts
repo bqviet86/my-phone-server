@@ -1,4 +1,4 @@
-import { ParamsDictionary } from 'express-serve-static-core'
+import { ParamsDictionary, Query } from 'express-serve-static-core'
 
 export interface CreatePhoneOptionReqBody {
     color: string
@@ -48,6 +48,12 @@ export interface CreatePhoneReqBody {
 
 export interface GetPhoneReqParams extends ParamsDictionary {
     phone_id: string
+}
+
+export interface GetAllPhonesReqQuery extends Query {
+    brand: string
+    page: string
+    limit: string
 }
 
 export interface UpdatePhoneReqParams extends ParamsDictionary {

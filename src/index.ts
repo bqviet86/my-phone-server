@@ -8,6 +8,7 @@ import usersRouter from '~/routes/users.routes'
 import mediasRouter from './routes/medias.routes'
 import brandsRouter from './routes/brands.routes'
 import phonesRouter from './routes/phones.routes'
+import cartsRouter from './routes/carts.routes'
 import staticRouter from './routes/static.routes'
 import databaseService from '~/services/database.services'
 import { initFolder } from './utils/file'
@@ -28,13 +29,19 @@ databaseService.connect().then(() => {
 
 // Middlewares
 app.use(express.json())
-app.use(cors())
+app.use(
+    cors({
+        origin: ['http://localhost:3000'],
+        credentials: true
+    })
+)
 
 // Routes
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/brands', brandsRouter)
 app.use('/phones', phonesRouter)
+app.use('/carts', cartsRouter)
 app.use('/static', staticRouter)
 
 // Error handler

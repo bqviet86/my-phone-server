@@ -7,6 +7,7 @@ import Address from '~/models/schemas/Address.schema'
 import Brand from '~/models/schemas/Brand.schema'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import Phone from '~/models/schemas/Phone.schema'
+import Cart from '~/models/schemas/Cart.schema'
 
 config()
 
@@ -60,6 +61,10 @@ class DatabaseService {
 
     get phones(): Collection<Phone> {
         return this.db.collection(process.env.DB_PHONES_COLLECTION as string)
+    }
+
+    get carts(): Collection<Cart> {
+        return this.db.collection(process.env.DB_CARTS_COLLECTION as string)
     }
 }
 

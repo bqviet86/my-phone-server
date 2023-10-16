@@ -103,7 +103,7 @@ export const PHONES_MESSAGES = {
     IMAGE_MUST_BE_A_STRING: 'Ảnh của điện thoại phải là một chuỗi',
     IMAGE_NOT_FOUND: 'Không tìm thấy ảnh của điện thoại',
     MUST_PROVIDE_AT_LEAST_ONE_OPTION: 'Phải cung cấp ít nhất một option',
-    HAVE_PHONE_OPTION_NOT_FOUND: 'Có option của điện thoại không được tìm thấy',
+    HAVE_PHONE_OPTION_NOT_FOUND: 'Option của điện thoại không được tìm thấy',
     DESCRIPTION_IS_REQUIRED: 'Mô tả không được để trống',
     DESCRIPTION_MUST_BE_A_STRING: 'Mô tả phải là một chuỗi',
     BRAND_IS_REQUIRED: 'Thương hiệu không được để trống',
@@ -155,5 +155,18 @@ export const PHONES_MESSAGES = {
     CREATE_PHONE_SUCCESSFULLY: 'Tạo điện thoại thành công',
     GET_PHONE_SUCCESSFULLY: 'Lấy điện thoại thành công',
     UPDATE_PHONE_SUCCESSFULLY: 'Cập nhật điện thoại thành công',
-    DELETE_PHONE_SUCCESSFULLY: 'Xóa điện thoại thành công'
+    DELETE_PHONE_SUCCESSFULLY: 'Xóa điện thoại thành công',
+    GET_ALL_PHONES_SUCCESSFULLY: 'Lấy tất cả điện thoại thành công'
+}
+
+export const CARTS_MESSAGES = {
+    PHONE_ID_IS_REQUIRED: 'ID điện thoại không được để trống',
+    PHONE_ID_MUST_BE_A_STRING: 'ID điện thoại phải là một chuỗi',
+    PHONE_OPTION_ID_IS_REQUIRED: 'ID option của điện thoại không được để trống',
+    PHONE_OPTION_ID_MUST_BE_A_STRING: 'ID option của điện thoại phải là một chuỗi',
+    INVALID_PHONE_OPTION_ID: 'ID option của điện thoại không hợp lệ',
+    QUANTITY_IS_REQUIRED: 'Số lượng không được để trống',
+    QUANTITY_MUST_BE_A_NUMBER: 'Số lượng phải là một số',
+
+    ADD_TO_CART_SUCCESSFULLY: 'Thêm vào giỏ hàng thành công'
 }

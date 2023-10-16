@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { ObjectId } from 'mongodb'
 
 import { PHONES_MESSAGES } from '~/constants/messages'
 import {
@@ -7,6 +8,7 @@ import {
     CreatePhoneReqBody,
     DeletePhoneOptionReqParams,
     DeletePhoneReqParams,
+    GetAllPhonesReqQuery,
     GetPhoneReqParams,
     UpdatePhoneOptionReqBody,
     UpdatePhoneOptionReqParams,
@@ -70,13 +72,46 @@ export const getPhoneController = (req: Request<GetPhoneReqParams>, res: Respons
     })
 }
 
+export const getAllPhonesController = async (
+    req: Request<ParamsDictionary, any, any, GetAllPhonesReqQuery>,
+    res: Response
+) => {
+    const { brand } = req.query
+    const limit = Number(req.query.limit)
+    const page = Number(req.query.page)
+    const result = await phoneService.getAllPhones({ brand, page, limit })
+
+    return res.json({
+        message: PHONES_MESSAGES.GET_ALL_PHONES_SUCCESSFULLY,
+        result: {
+            phones: result.phones,
+            limit,
+            page,
+            total_pages: Math.ceil(result.total_phones / Number(limit))
+        }
+    })
+}
+
 export const updatePhoneController = async (
     req: Request<UpdatePhoneReqParams, any, UpdatePhoneReqBody>,
     res: Response
 ) => {
     const { phone_id } = req.params
-    const phone_options = req.phone_options as PhoneOption[]
-    const result = await phoneService.updatePhone({ phone_id, phone_options, payload: req.body })
+    const phone = req.phone as Phone
+    const phone_options = req.phone_options
+    const brand = req.brand
+
+    const root_phone_option_ids = (phone.options as unknown as PhoneOption[]).map((option) => option._id as ObjectId)
+    const root_phone_brand_id = (phone.brand as unknown as Brand)._id as ObjectId
+
+    const result = await phoneService.updatePhone({
+        phone_id,
+        root_phone_option_ids, // Dữ liệu gốc options của phone
+        root_phone_brand_id, // Dữ liệu gốc brand của phone
+        phone_options, // Dữ liệu options mới của phone (nếu có)
+        brand, // Dữ liệu brand mới của phone (nếu có)
+        payload: req.body
+    })
 
     return res.json({
         message: PHONES_MESSAGES.UPDATE_PHONE_SUCCESSFULLY,

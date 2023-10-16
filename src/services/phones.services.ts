@@ -120,17 +120,74 @@ class PhoneService {
         return phone
     }
 
+    async getAllPhones({ brand, page = 1, limit = 10 }: { brand: string; page: number; limit: number }) {
+        const phones = await databaseService.phones
+            .aggregate<Phone>([
+                {
+                    $match: {
+                        ...(brand && {
+                            brand: new ObjectId(brand)
+                        })
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'brands',
+                        localField: 'brand',
+                        foreignField: '_id',
+                        as: 'brand'
+                    }
+                },
+                {
+                    $unwind: '$brand'
+                },
+                {
+                    $skip: (page - 1) * limit
+                },
+                {
+                    $limit: limit
+                }
+            ])
+            .toArray()
+        const total_phones = await databaseService.phones.countDocuments({
+            ...(brand && {
+                brand: new ObjectId(brand)
+            })
+        })
+
+        return {
+            phones,
+            total_phones
+        }
+    }
+
     async updatePhone({
         phone_id,
-        phone_options,
+        root_phone_option_ids, // Dữ liệu gốc options của phone
+        root_phone_brand_id, // Dữ liệu gốc brand của phone
+        phone_options, // Dữ liệu mới options của phone
+        brand, // Dữ liệu mới brand của phone
         payload
     }: {
         phone_id: string
-        phone_options: PhoneOption[]
+        root_phone_option_ids: ObjectId[]
+        root_phone_brand_id: ObjectId
+        phone_options?: PhoneOption[]
+        brand?: Brand
         payload: UpdatePhoneReqBody
     }) {
-        // Tạo giá và giá gốc
-        const { price, price_before_discount } = this.createPriceAndPriceBeforeDiscount(phone_options)
+        const setObject = {
+            // Nếu có truyền lên options thì cập nhật lại options, giá và giá gốc
+            ...(phone_options
+                ? {
+                      options: (payload.options as string[]).map((option) => new ObjectId(option)),
+                      ...this.createPriceAndPriceBeforeDiscount(phone_options)
+                  }
+                : {}),
+
+            // Nếu có truyền lên brand thì cập nhật lại brand
+            ...(brand ? { brand: new ObjectId(payload.brand) } : {})
+        }
 
         // Update phone
         const result = await databaseService.phones.findOneAndUpdate(
@@ -140,10 +197,9 @@ class PhoneService {
             {
                 $set: {
                     ...payload,
-                    options: (payload.options || []).map((option) => new ObjectId(option)),
-                    brand: new ObjectId(payload.brand),
-                    price,
-                    price_before_discount
+                    options: root_phone_option_ids,
+                    brand: root_phone_brand_id,
+                    ...setObject
                 },
                 $currentDate: {
                     updated_at: true

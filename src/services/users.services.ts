@@ -20,7 +20,7 @@ import databaseService from './database.services'
 import mediaService from './medias.services'
 import { hashPassword } from '~/utils/crypto'
 import { signToken, verifyToken } from '~/utils/jwt'
-import { sendForgotPasswordAdminEmail, sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/email'
+import { sendForgotPasswordAdminEmail, sendForgotPasswordEmail } from '~/utils/email'
 
 config()
 
@@ -174,7 +174,6 @@ class UserService {
         ])
         const { iat, exp } = await this.decodeRefreshToken(refresh_token)
 
-        await sendVerifyRegisterEmail(payload.email, email_verify_token)
         await Promise.all([
             databaseService.users.insertOne(
                 new User({
@@ -268,8 +267,6 @@ class UserService {
                 }
             }
         )
-
-        await sendVerifyRegisterEmail(email, email_verify_token)
 
         return { message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS }
     }
