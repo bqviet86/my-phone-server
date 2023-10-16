@@ -8,6 +8,7 @@ import {
     CreatePhoneReqBody,
     DeletePhoneOptionReqParams,
     DeletePhoneReqParams,
+    GetAllPhonesReqBody,
     GetAllPhonesReqQuery,
     GetPhoneReqParams,
     UpdatePhoneOptionReqBody,
@@ -73,13 +74,13 @@ export const getPhoneController = (req: Request<GetPhoneReqParams>, res: Respons
 }
 
 export const getAllPhonesController = async (
-    req: Request<ParamsDictionary, any, any, GetAllPhonesReqQuery>,
+    req: Request<ParamsDictionary, any, GetAllPhonesReqBody, GetAllPhonesReqQuery>,
     res: Response
 ) => {
-    const { brand } = req.query
     const limit = Number(req.query.limit)
     const page = Number(req.query.page)
-    const result = await phoneService.getAllPhones({ brand, page, limit })
+    const brands = req.body.brands || []
+    const result = await phoneService.getAllPhones({ page, limit, brands })
 
     return res.json({
         message: PHONES_MESSAGES.GET_ALL_PHONES_SUCCESSFULLY,

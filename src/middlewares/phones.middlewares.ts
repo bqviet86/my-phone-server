@@ -499,6 +499,64 @@ export const getPhoneValidator = validate(
     )
 )
 
+export const getAllPhonesValidator = validate(
+    checkSchema(
+        {
+            page: {
+                isInt: {
+                    options: {
+                        min: 1
+                    },
+                    errorMessage: 'Page must be an integer greater than 0'
+                }
+            },
+            limit: {
+                isInt: {
+                    options: {
+                        min: 1,
+                        max: 100
+                    },
+                    errorMessage: 'Limit must be an integer between 1 and 100'
+                }
+            },
+            brands: {
+                isArray: true,
+                optional: true,
+                custom: {
+                    options: async (value: string[], { req }) => {
+                        if (value.length > 0 && !value.every((item) => ObjectId.isValid(item))) {
+                            throw new ErrorWithStatus({
+                                message: PHONES_MESSAGES.INVALID_BRAND_ID,
+                                status: HTTP_STATUS.BAD_REQUEST
+                            })
+                        }
+
+                        const brands = await databaseService.brands
+                            .find({
+                                ...(value.length > 0 && {
+                                    _id: {
+                                        $in: value.map((item) => new ObjectId(item))
+                                    }
+                                })
+                            })
+                            .toArray()
+
+                        if (brands.length !== value.length) {
+                            throw new ErrorWithStatus({
+                                message: PHONES_MESSAGES.BRAND_NOT_FOUND,
+                                status: HTTP_STATUS.NOT_FOUND
+                            })
+                        }
+
+                        return true
+                    }
+                }
+            }
+        },
+        ['query', 'body']
+    )
+)
+
 export const updatePhoneValidator = validate(
     checkSchema(
         {

@@ -120,15 +120,18 @@ class PhoneService {
         return phone
     }
 
-    async getAllPhones({ brand, page = 1, limit = 10 }: { brand: string; page: number; limit: number }) {
+    async getAllPhones({ page, limit, brands }: { page: number; limit: number; brands: string[] }) {
+        const $match = {
+            ...(brands.length > 0 && {
+                brand: {
+                    $in: brands.map((brand) => new ObjectId(brand))
+                }
+            })
+        }
         const phones = await databaseService.phones
             .aggregate<Phone>([
                 {
-                    $match: {
-                        ...(brand && {
-                            brand: new ObjectId(brand)
-                        })
-                    }
+                    $match
                 },
                 {
                     $lookup: {
@@ -149,11 +152,7 @@ class PhoneService {
                 }
             ])
             .toArray()
-        const total_phones = await databaseService.phones.countDocuments({
-            ...(brand && {
-                brand: new ObjectId(brand)
-            })
-        })
+        const total_phones = await databaseService.phones.countDocuments($match)
 
         return {
             phones,
@@ -178,15 +177,15 @@ class PhoneService {
     }) {
         const setObject = {
             // Nếu có truyền lên options thì cập nhật lại options, giá và giá gốc
-            ...(phone_options
-                ? {
-                      options: (payload.options as string[]).map((option) => new ObjectId(option)),
-                      ...this.createPriceAndPriceBeforeDiscount(phone_options)
-                  }
-                : {}),
+            ...(phone_options && {
+                options: (payload.options as string[]).map((option) => new ObjectId(option)),
+                ...this.createPriceAndPriceBeforeDiscount(phone_options)
+            }),
 
             // Nếu có truyền lên brand thì cập nhật lại brand
-            ...(brand ? { brand: new ObjectId(payload.brand) } : {})
+            ...(brand && {
+                brand: new ObjectId(payload.brand)
+            })
         }
 
         // Update phone

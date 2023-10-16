@@ -16,6 +16,7 @@ import {
     createPhoneValidator,
     deletePhoneOptionValidator,
     deletePhoneValidator,
+    getAllPhonesValidator,
     getPhoneValidator,
     updatePhoneOptionValidator,
     updatePhoneValidator
@@ -99,7 +100,6 @@ phonesRouter.post(
  * Description: Get a phone
  * Path: /:phone_id
  * Method: GET
- * Header: { Authorization: Bearer <access_token> }
  * Params: GetPhoneReqParams
  */
 phonesRouter.get('/:phone_id', getPhoneValidator, wrapRequestHandler(getPhoneController))
@@ -108,11 +108,10 @@ phonesRouter.get('/:phone_id', getPhoneValidator, wrapRequestHandler(getPhoneCon
  * Description: Get all phones
  * Path: /
  * Method: GET
- * Header: { Authorization: Bearer <access_token> }
  * Query: GetAllPhonesReqQuery
  * Body: GetAllPhonesReqBody
  */
-phonesRouter.get('/', wrapRequestHandler(getAllPhonesController))
+phonesRouter.get('/', getAllPhonesValidator, wrapRequestHandler(getAllPhonesController))
 
 /**
  * Description: Update a phone
