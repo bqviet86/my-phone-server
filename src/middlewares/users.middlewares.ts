@@ -6,7 +6,7 @@ import { capitalize } from 'lodash'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 
-import { Sex, UserRole, UserVerifyStatus } from '~/constants/enums'
+import { Sex, UserRole } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
