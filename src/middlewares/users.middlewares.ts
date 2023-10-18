@@ -300,17 +300,7 @@ export const loginValidator = validate(
                         })
 
                         if (user === null) {
-                            throw new ErrorWithStatus({
-                                message: USERS_MESSAGES.USER_NOT_FOUND,
-                                status: HTTP_STATUS.NOT_FOUND
-                            })
-                        }
-
-                        if (
-                            hashPassword((req as Request<ParamsDictionary, any, LoginReqBody>).body.password) !==
-                            user.password
-                        ) {
-                            throw new Error(USERS_MESSAGES.PASSWORD_INVALID)
+                            throw new Error(USERS_MESSAGES.YOU_HAVE_NOT_REGISTERED_WITH_THIS_EMAIL)
                         }
 
                         ;(req as Request).user = user
@@ -319,7 +309,21 @@ export const loginValidator = validate(
                     }
                 }
             },
-            password: passwordSchema
+            password: {
+                ...passwordSchema,
+                custom: {
+                    options: async (value: string, { req }) => {
+                        const { email } = (req as Request<ParamsDictionary, any, LoginReqBody>).body
+                        const user = await databaseService.users.findOne({ email })
+
+                        if (user && hashPassword(value) !== user.password) {
+                            throw new Error(USERS_MESSAGES.INCORRECT_PASSWORD)
+                        }
+
+                        return true
+                    }
+                }
+            }
         },
         ['body']
     )
