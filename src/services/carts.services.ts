@@ -64,6 +64,7 @@ class CartService {
     }
 
     async getCart(user_id: string) {
+        // Trả về danh sách sản phẩm trong giỏ hàng của user được sắp xếp theo thời gian cập nhật sao cho sản phẩm mới nhất được hiển thị đầu tiên
         const carts = await databaseService.carts
             .aggregate<Cart>([
                 {
@@ -133,6 +134,11 @@ class CartService {
                         total_price: 1,
                         created_at: 1,
                         updated_at: 1
+                    }
+                },
+                {
+                    $sort: {
+                        updated_at: -1
                     }
                 }
             ])
