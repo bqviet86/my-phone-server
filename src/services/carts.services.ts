@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-import { AddToCartReqBody } from '~/models/requests/Cart.request'
+import { AddToCartReqBody, UpdateCartReqBody } from '~/models/requests/Cart.request'
 import Cart from '~/models/schemas/Cart.schema'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import databaseService from './database.services'
@@ -145,6 +145,41 @@ class CartService {
             .toArray()
 
         return carts
+    }
+
+    async updateCart({
+        user_id,
+        cart_id,
+        phone_option,
+        payload
+    }: {
+        user_id: string
+        cart_id: string
+        phone_option: PhoneOption
+        payload: UpdateCartReqBody
+    }) {
+        const result = await databaseService.carts.findOneAndUpdate(
+            {
+                _id: new ObjectId(cart_id),
+                user_id: new ObjectId(user_id)
+            },
+            {
+                $set: {
+                    ...payload,
+                    phone_option_id: new ObjectId(payload.phone_option_id),
+                    total_price: phone_option.price * payload.quantity
+                },
+                $currentDate: {
+                    updated_at: true
+                }
+            },
+            {
+                returnDocument: 'after',
+                includeResultMetadata: false
+            }
+        )
+
+        return result
     }
 }
 

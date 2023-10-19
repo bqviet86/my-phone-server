@@ -168,7 +168,12 @@ export const CARTS_MESSAGES = {
     INVALID_PHONE_OPTION_ID: 'ID option của điện thoại không hợp lệ',
     QUANTITY_IS_REQUIRED: 'Số lượng không được để trống',
     QUANTITY_MUST_BE_A_NUMBER: 'Số lượng phải là một số',
+    CART_ID_IS_REQUIRED: 'ID giỏ hàng không được để trống',
+    CART_ID_MUST_BE_A_STRING: 'ID giỏ hàng phải là một chuỗi',
+    INVALID_CART_ID: 'ID giỏ hàng không hợp lệ',
+    CART_NOT_FOUND: 'Không tìm thấy giỏ hàng',
 
     ADD_TO_CART_SUCCESSFULLY: 'Thêm vào giỏ hàng thành công',
-    GET_CART_SUCCESSFULLY: 'Lấy giỏ hàng thành công'
+    GET_CART_SUCCESSFULLY: 'Lấy giỏ hàng thành công',
+    UPDATE_CART_SUCCESSFULLY: 'Cập nhật giỏ hàng thành công'
 }

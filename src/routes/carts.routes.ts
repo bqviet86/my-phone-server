@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { addToCartController, getCartController } from '~/controllers/carts.controllers'
-import { addToCartValidator, isPhoneOptionIdMatched } from '~/middlewares/carts.middlewares'
+import { addToCartController, getCartController, updateCartController } from '~/controllers/carts.controllers'
+import { addToCartValidator, isPhoneOptionIdMatched, updateCartValidator } from '~/middlewares/carts.middlewares'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -29,5 +29,21 @@ cartsRouter.post(
  * Header: { Authorization: Bearer <access_token> }
  */
 cartsRouter.get('/', accessTokenValidator, wrapRequestHandler(getCartController))
+
+/**
+ * Description: Update cart
+ * Path: /:cart_id
+ * Method: PATCH
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: cart_id
+ * Body: UpdateCartReqBody
+ */
+cartsRouter.patch(
+    '/:cart_id',
+    accessTokenValidator,
+    updateCartValidator,
+    isPhoneOptionIdMatched,
+    wrapRequestHandler(updateCartController)
+)
 
 export default cartsRouter
