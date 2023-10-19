@@ -15,21 +15,52 @@ class CartService {
         phone_option: PhoneOption
         payload: AddToCartReqBody
     }) {
-        const result = await databaseService.carts.insertOne(
-            new Cart({
-                ...payload,
-                user_id: new ObjectId(user_id),
-                phone_id: new ObjectId(payload.phone_id),
-                phone_option_id: new ObjectId(payload.phone_option_id),
-                total_price: phone_option.price * payload.quantity
-            })
-        )
-
-        const cart = await databaseService.carts.findOne({
-            _id: result.insertedId
+        // Kiểm tra xem sản phẩm với option này đã có trong giỏ hàng chưa
+        const isExist = await databaseService.carts.findOne({
+            user_id: new ObjectId(user_id),
+            phone_id: new ObjectId(payload.phone_id),
+            phone_option_id: new ObjectId(payload.phone_option_id)
         })
 
-        return cart
+        if (isExist) {
+            // Cập nhật lại số lượng và tổng tiền
+            const cart = await databaseService.carts.findOneAndUpdate(
+                {
+                    _id: isExist._id
+                },
+                {
+                    $set: {
+                        quantity: isExist.quantity + payload.quantity,
+                        total_price: phone_option.price * (isExist.quantity + payload.quantity)
+                    },
+                    $currentDate: {
+                        updated_at: true
+                    }
+                },
+                {
+                    returnDocument: 'after',
+                    includeResultMetadata: false
+                }
+            )
+
+            return cart
+        } else {
+            // Thêm mới vào giỏ hàng
+            const result = await databaseService.carts.insertOne(
+                new Cart({
+                    ...payload,
+                    user_id: new ObjectId(user_id),
+                    phone_id: new ObjectId(payload.phone_id),
+                    phone_option_id: new ObjectId(payload.phone_option_id),
+                    total_price: phone_option.price * payload.quantity
+                })
+            )
+            const cart = await databaseService.carts.findOne({
+                _id: result.insertedId
+            })
+
+            return cart
+        }
     }
 
     async getCart(user_id: string) {
