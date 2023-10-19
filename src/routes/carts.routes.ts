@@ -1,7 +1,17 @@
 import { Router } from 'express'
 
-import { addToCartController, getCartController, updateCartController } from '~/controllers/carts.controllers'
-import { addToCartValidator, isPhoneOptionIdMatched, updateCartValidator } from '~/middlewares/carts.middlewares'
+import {
+    addToCartController,
+    deleteCartController,
+    getCartController,
+    updateCartController
+} from '~/controllers/carts.controllers'
+import {
+    addToCartValidator,
+    deleteCartValidator,
+    isPhoneOptionIdMatched,
+    updateCartValidator
+} from '~/middlewares/carts.middlewares'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -45,5 +55,14 @@ cartsRouter.patch(
     isPhoneOptionIdMatched,
     wrapRequestHandler(updateCartController)
 )
+
+/**
+ * Description: Delete cart
+ * Path: /:cart_id
+ * Method: DELETE
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: cart_id
+ */
+cartsRouter.delete('/:cart_id', accessTokenValidator, deleteCartValidator, wrapRequestHandler(deleteCartController))
 
 export default cartsRouter

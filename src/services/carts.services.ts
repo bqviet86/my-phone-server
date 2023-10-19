@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb'
 
+import { CARTS_MESSAGES } from '~/constants/messages'
 import { AddToCartReqBody, UpdateCartReqBody } from '~/models/requests/Cart.request'
 import Cart from '~/models/schemas/Cart.schema'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
@@ -180,6 +181,15 @@ class CartService {
         )
 
         return result
+    }
+
+    async deleteCart(user_id: string, cart_id: string) {
+        await databaseService.carts.deleteOne({
+            _id: new ObjectId(cart_id),
+            user_id: new ObjectId(user_id)
+        })
+
+        return { message: CARTS_MESSAGES.DELETE_CART_SUCCESSFULLY }
     }
 }
 

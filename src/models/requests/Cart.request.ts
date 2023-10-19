@@ -14,3 +14,7 @@ export interface UpdateCartReqBody {
     phone_option_id: string
     quantity: number
 }
+
+export interface DeleteCartReqParams extends ParamsDictionary {
+    cart_id: string
+}

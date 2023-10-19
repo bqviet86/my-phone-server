@@ -173,7 +173,8 @@ export const CARTS_MESSAGES = {
     INVALID_CART_ID: 'ID giỏ hàng không hợp lệ',
     CART_NOT_FOUND: 'Không tìm thấy giỏ hàng',
 
-    ADD_TO_CART_SUCCESSFULLY: 'Thêm vào giỏ hàng thành công',
-    GET_CART_SUCCESSFULLY: 'Lấy giỏ hàng thành công',
-    UPDATE_CART_SUCCESSFULLY: 'Cập nhật giỏ hàng thành công'
+    ADD_TO_CART_SUCCESSFULLY: 'Thêm sản phẩm vào giỏ hàng thành công',
+    GET_CART_SUCCESSFULLY: 'Lấy tất cả sản phẩm trong giỏ hàng thành công',
+    UPDATE_CART_SUCCESSFULLY: 'Cập nhật giỏ hàng thành công',
+    DELETE_CART_SUCCESSFULLY: 'Xóa sản phẩm khỏi giỏ hàng thành công'
 }

@@ -32,6 +32,68 @@ const quantitySchema: ParamSchema = {
     }
 }
 
+const cartIdSchema: ParamSchema = {
+    notEmpty: {
+        errorMessage: CARTS_MESSAGES.CART_ID_IS_REQUIRED
+    },
+    isString: {
+        errorMessage: CARTS_MESSAGES.CART_ID_MUST_BE_A_STRING
+    },
+    custom: {
+        options: async (value: string, { req }) => {
+            const { user_id } = (req as Request).decoded_authorization as TokenPayload
+
+            if (!ObjectId.isValid(value)) {
+                throw new ErrorWithStatus({
+                    message: CARTS_MESSAGES.INVALID_CART_ID,
+                    status: HTTP_STATUS.BAD_REQUEST
+                })
+            }
+
+            const [cart] = await databaseService.carts
+                .aggregate<Cart>([
+                    {
+                        $match: {
+                            _id: new ObjectId(value),
+                            user_id: new ObjectId(user_id)
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'phones',
+                            localField: 'phone_id',
+                            foreignField: '_id',
+                            as: 'phone'
+                        }
+                    },
+                    {
+                        $unwind: '$phone'
+                    },
+                    {
+                        $lookup: {
+                            from: 'phone_options',
+                            localField: 'phone.options',
+                            foreignField: '_id',
+                            as: 'phone.options'
+                        }
+                    }
+                ])
+                .toArray()
+
+            if (cart === undefined) {
+                throw new ErrorWithStatus({
+                    message: CARTS_MESSAGES.CART_NOT_FOUND,
+                    status: HTTP_STATUS.NOT_FOUND
+                })
+            }
+
+            ;(req as Request).phone = (cart as any).phone
+
+            return true
+        }
+    }
+}
+
 export const addToCartValidator = validate(
     checkSchema(
         {
@@ -78,70 +140,19 @@ export const isPhoneOptionIdMatched = (req: Request, res: Response, next: NextFu
 export const updateCartValidator = validate(
     checkSchema(
         {
-            cart_id: {
-                notEmpty: {
-                    errorMessage: CARTS_MESSAGES.CART_ID_IS_REQUIRED
-                },
-                isString: {
-                    errorMessage: CARTS_MESSAGES.CART_ID_MUST_BE_A_STRING
-                },
-                custom: {
-                    options: async (value: string, { req }) => {
-                        const { user_id } = (req as Request).decoded_authorization as TokenPayload
-
-                        if (!ObjectId.isValid(value)) {
-                            throw new ErrorWithStatus({
-                                message: CARTS_MESSAGES.INVALID_CART_ID,
-                                status: HTTP_STATUS.BAD_REQUEST
-                            })
-                        }
-
-                        const [cart] = await databaseService.carts
-                            .aggregate<Cart>([
-                                {
-                                    $match: {
-                                        _id: new ObjectId(value),
-                                        user_id: new ObjectId(user_id)
-                                    }
-                                },
-                                {
-                                    $lookup: {
-                                        from: 'phones',
-                                        localField: 'phone_id',
-                                        foreignField: '_id',
-                                        as: 'phone'
-                                    }
-                                },
-                                {
-                                    $unwind: '$phone'
-                                },
-                                {
-                                    $lookup: {
-                                        from: 'phone_options',
-                                        localField: 'phone.options',
-                                        foreignField: '_id',
-                                        as: 'phone.options'
-                                    }
-                                }
-                            ])
-                            .toArray()
-
-                        if (cart === undefined) {
-                            throw new ErrorWithStatus({
-                                message: CARTS_MESSAGES.CART_NOT_FOUND,
-                                status: HTTP_STATUS.NOT_FOUND
-                            })
-                        }
-
-                        ;(req as Request).phone = (cart as any).phone
-
-                        return true
-                    }
-                }
-            },
+            cart_id: cartIdSchema,
             phone_option_id: newPhoneOptionIdSchema,
             quantity: quantitySchema
         },
         ['params', 'body']
+    )
+)
+
+export const deleteCartValidator = validate(
+    checkSchema(
+        {
+            cart_id: cartIdSchema
+        },
+        ['params']
     )
 )

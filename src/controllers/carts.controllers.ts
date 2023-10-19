@@ -2,7 +2,12 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 
 import { CARTS_MESSAGES } from '~/constants/messages'
-import { AddToCartReqBody, UpdateCartReqBody, UpdateCartReqParams } from '~/models/requests/Cart.request'
+import {
+    AddToCartReqBody,
+    DeleteCartReqParams,
+    UpdateCartReqBody,
+    UpdateCartReqParams
+} from '~/models/requests/Cart.request'
 import { TokenPayload } from '~/models/requests/User.requests'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import cartService from '~/services/carts.services'
@@ -50,4 +55,12 @@ export const updateCartController = async (
         message: CARTS_MESSAGES.UPDATE_CART_SUCCESSFULLY,
         result
     })
+}
+
+export const deleteCartController = async (req: Request<DeleteCartReqParams>, res: Response) => {
+    const { user_id } = req.decoded_authorization as TokenPayload
+    const { cart_id } = req.params
+    const result = await cartService.deleteCart(user_id, cart_id)
+
+    return res.json(result)
 }
