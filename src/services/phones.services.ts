@@ -128,31 +128,34 @@ class PhoneService {
                 }
             })
         }
-        const phones = await databaseService.phones
-            .aggregate<Phone>([
-                {
-                    $match
-                },
-                {
-                    $lookup: {
-                        from: 'brands',
-                        localField: 'brand',
-                        foreignField: '_id',
-                        as: 'brand'
+
+        const [phones, total_phones] = await Promise.all([
+            databaseService.phones
+                .aggregate<Phone>([
+                    {
+                        $match
+                    },
+                    {
+                        $lookup: {
+                            from: 'brands',
+                            localField: 'brand',
+                            foreignField: '_id',
+                            as: 'brand'
+                        }
+                    },
+                    {
+                        $unwind: '$brand'
+                    },
+                    {
+                        $skip: (page - 1) * limit
+                    },
+                    {
+                        $limit: limit
                     }
-                },
-                {
-                    $unwind: '$brand'
-                },
-                {
-                    $skip: (page - 1) * limit
-                },
-                {
-                    $limit: limit
-                }
-            ])
-            .toArray()
-        const total_phones = await databaseService.phones.countDocuments($match)
+                ])
+                .toArray(),
+            databaseService.phones.countDocuments($match)
+        ])
 
         return {
             phones,

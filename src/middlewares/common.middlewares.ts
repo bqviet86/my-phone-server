@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { ParamSchema } from 'express-validator'
+import { ParamSchema, checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { pick } from 'lodash'
 
@@ -8,6 +8,7 @@ import { PHONES_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import Phone from '~/models/schemas/Phone.schema'
 import databaseService from '~/services/database.services'
+import { validate } from '~/utils/validation'
 
 type FilterKeys<T> = Array<keyof T>
 
@@ -102,3 +103,39 @@ export const phoneIdSchema: ParamSchema = {
         }
     }
 }
+
+export const paginationValidator = validate(
+    checkSchema(
+        {
+            page: {
+                isNumeric: true,
+                custom: {
+                    options: async (value: number) => {
+                        const num = Number(value)
+
+                        if (num < 1) {
+                            throw new Error('page >= 1')
+                        }
+
+                        return true
+                    }
+                }
+            },
+            limit: {
+                isNumeric: true,
+                custom: {
+                    options: async (value: number) => {
+                        const num = Number(value)
+
+                        if (num > 100 || num < 1) {
+                            throw new Error('1 <= limit <= 100')
+                        }
+
+                        return true
+                    }
+                }
+            }
+        },
+        ['query']
+    )
+)

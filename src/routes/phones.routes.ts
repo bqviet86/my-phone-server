@@ -10,7 +10,7 @@ import {
     updatePhoneController,
     updatePhoneOptionController
 } from '~/controllers/phones.controllers'
-import { filterMiddleware } from '~/middlewares/common.middlewares'
+import { filterMiddleware, paginationValidator } from '~/middlewares/common.middlewares'
 import {
     createPhoneOptionValidator,
     createPhoneValidator,
@@ -102,7 +102,7 @@ phonesRouter.post(
  * Method: GET
  * Params: GetPhoneReqParams
  */
-phonesRouter.get('/:phone_id', getPhoneValidator, wrapRequestHandler(getPhoneController))
+phonesRouter.get('/:phone_id', paginationValidator, getPhoneValidator, wrapRequestHandler(getPhoneController))
 
 /**
  * Description: Get all phones

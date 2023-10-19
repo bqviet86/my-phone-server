@@ -9,6 +9,7 @@ import mediasRouter from './routes/medias.routes'
 import brandsRouter from './routes/brands.routes'
 import phonesRouter from './routes/phones.routes'
 import cartsRouter from './routes/carts.routes'
+import searchRouter from './routes/search.routes'
 import staticRouter from './routes/static.routes'
 import databaseService from '~/services/database.services'
 import { initFolder } from './utils/file'
@@ -25,6 +26,7 @@ initFolder(UPLOAD_VIDEO_TEMP_DIR)
 // Connect to database and index fields
 databaseService.connect().then(() => {
     databaseService.indexUser()
+    databaseService.indexPhones()
 })
 
 // Middlewares
@@ -42,6 +44,7 @@ app.use('/medias', mediasRouter)
 app.use('/brands', brandsRouter)
 app.use('/phones', phonesRouter)
 app.use('/carts', cartsRouter)
+app.use('/search', searchRouter)
 app.use('/static', staticRouter)
 
 // Error handler

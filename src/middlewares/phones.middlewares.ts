@@ -502,23 +502,6 @@ export const getPhoneValidator = validate(
 export const getAllPhonesValidator = validate(
     checkSchema(
         {
-            page: {
-                isInt: {
-                    options: {
-                        min: 1
-                    },
-                    errorMessage: 'Page must be an integer greater than 0'
-                }
-            },
-            limit: {
-                isInt: {
-                    options: {
-                        min: 1,
-                        max: 100
-                    },
-                    errorMessage: 'Limit must be an integer between 1 and 100'
-                }
-            },
             brands: {
                 optional: true,
                 custom: {

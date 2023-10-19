@@ -39,6 +39,14 @@ class DatabaseService {
         }
     }
 
+    async indexPhones() {
+        const exists = await this.phones.indexExists(['content_text'])
+
+        if (!exists) {
+            this.phones.createIndex({ name: 'text' }, { default_language: 'none' })
+        }
+    }
+
     get users(): Collection<User> {
         return this.db.collection(process.env.DB_USERS_COLLECTION as string)
     }
