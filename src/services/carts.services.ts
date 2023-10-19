@@ -71,6 +71,14 @@ class CartService {
                     }
                 },
                 {
+                    $lookup: {
+                        from: 'phone_options',
+                        localField: 'phone.options',
+                        foreignField: '_id',
+                        as: 'phone.options'
+                    }
+                },
+                {
                     $unwind: '$phone.brand'
                 },
                 {
@@ -79,7 +87,8 @@ class CartService {
                         phone: {
                             _id: 1,
                             name: 1,
-                            brand: 1
+                            brand: 1,
+                            options: 1
                         },
                         phone_option: {
                             _id: 1,
