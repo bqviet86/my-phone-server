@@ -6,9 +6,9 @@ interface AddressType {
     name: string
     phone_number: string
     email: string
-    province: string
-    district: string
-    ward: string
+    // province: string
+    // district: string
+    // ward: string
     specific_address: string
     default?: boolean
     created_at?: Date
@@ -21,9 +21,9 @@ export default class Address {
     name: string
     phone_number: string
     email: string
-    province: string
-    district: string
-    ward: string
+    // province: string
+    // district: string
+    // ward: string
     specific_address: string
     default: boolean
     created_at: Date
@@ -37,9 +37,9 @@ export default class Address {
         this.name = address.name
         this.phone_number = address.phone_number
         this.email = address.email
-        this.province = address.province
-        this.district = address.district
-        this.ward = address.ward
+        // this.province = address.province
+        // this.district = address.district
+        // this.ward = address.ward
         this.specific_address = address.specific_address
         this.default = address.default || false
         this.created_at = address.created_at || date

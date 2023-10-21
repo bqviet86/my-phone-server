@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb'
 
+import { CartStatus } from '~/constants/enums'
 import { CARTS_MESSAGES } from '~/constants/messages'
 import { AddToCartReqBody, UpdateCartReqBody } from '~/models/requests/Cart.request'
 import Cart from '~/models/schemas/Cart.schema'
@@ -16,11 +17,12 @@ class CartService {
         phone_option: PhoneOption
         payload: AddToCartReqBody
     }) {
-        // Kiểm tra xem sản phẩm với option này đã có trong giỏ hàng chưa
+        // Kiểm tra xem sản phẩm có option này với trạng thái là Pending có tồn tại trong giỏ hàng không
         const isExist = await databaseService.carts.findOne({
             user_id: new ObjectId(user_id),
             phone_id: new ObjectId(payload.phone_id),
-            phone_option_id: new ObjectId(payload.phone_option_id)
+            phone_option_id: new ObjectId(payload.phone_option_id),
+            cart_status: CartStatus.Pending
         })
 
         if (isExist) {
@@ -70,7 +72,8 @@ class CartService {
             .aggregate<Cart>([
                 {
                     $match: {
-                        user_id: new ObjectId(user_id)
+                        user_id: new ObjectId(user_id),
+                        cart_status: CartStatus.Pending
                     }
                 },
                 {

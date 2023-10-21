@@ -54,10 +54,11 @@ export interface RefreshTokenReqBody {
 }
 
 export interface UpdateMeReqBody {
-    name?: string
-    date_of_birth?: string
-    sex?: Sex
-    phone_number?: string
+    name: string
+    email: string
+    date_of_birth: string
+    sex: Sex
+    phone_number: string
 }
 
 export interface ChangePasswordReqBody {
@@ -70,9 +71,9 @@ export interface CreateAddressReqBody {
     name: string
     phone_number: string
     email: string
-    province: string
-    district: string
-    ward: string
+    // province: string
+    // district: string
+    // ward: string
     specific_address: string
 }
 
@@ -81,13 +82,13 @@ export interface UpdateAddressReqParams extends ParamsDictionary {
 }
 
 export interface UpdateAddressReqBody {
-    name?: string
-    phone_number?: string
-    email?: string
-    province?: string
-    district?: string
-    ward?: string
-    specific_address?: string
+    name: string
+    phone_number: string
+    email: string
+    // province: string
+    // district: string
+    // ward: string
+    specific_address: string
 }
 
 export interface DeleteAddressReqParams extends ParamsDictionary {

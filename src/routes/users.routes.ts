@@ -158,7 +158,7 @@ usersRouter.patch(
     '/me',
     accessTokenValidator,
     updateMeValidator,
-    filterMiddleware<UpdateMeReqBody>(['name', 'date_of_birth', 'sex', 'phone_number']),
+    filterMiddleware<UpdateMeReqBody>(['name', 'email', 'date_of_birth', 'sex', 'phone_number']),
     wrapRequestHandler(updateMeController)
 )
 
@@ -205,15 +205,7 @@ usersRouter.patch(
     '/address/:address_id',
     accessTokenValidator,
     updateAddressValidator,
-    filterMiddleware<UpdateAddressReqBody>([
-        'name',
-        'phone_number',
-        'email',
-        'province',
-        'district',
-        'ward',
-        'specific_address'
-    ]),
+    filterMiddleware<UpdateAddressReqBody>(['name', 'phone_number', 'email', 'specific_address']),
     wrapRequestHandler(updateAddressController)
 )
 

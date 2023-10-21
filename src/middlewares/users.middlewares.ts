@@ -524,24 +524,11 @@ export const resetPasswordValidator = validate(
 export const updateMeValidator = validate(
     checkSchema(
         {
-            name: {
-                ...nameSchema,
-                optional: true,
-                notEmpty: false
-            },
-            date_of_birth: {
-                ...dateOfBirthSchema,
-                optional: true
-            },
-            sex: {
-                ...sexSchema,
-                optional: true
-            },
-            phone_number: {
-                ...phoneNumberSchema,
-                optional: true,
-                notEmpty: false
-            }
+            name: nameSchema,
+            email: emailSchema,
+            date_of_birth: dateOfBirthSchema,
+            sex: sexSchema,
+            phone_number: phoneNumberSchema
         },
         ['body']
     )
@@ -603,41 +590,25 @@ export const updateAddressValidator = validate(
     checkSchema(
         {
             address_id: addressIdSchema,
-            name: {
-                ...nameSchema,
-                optional: true,
-                notEmpty: false
-            },
-            phone_number: {
-                ...phoneNumberSchema,
-                optional: true,
-                notEmpty: false
-            },
-            email: {
-                ...emailSchema,
-                optional: true,
-                notEmpty: false
-            },
-            province: {
-                ...provinceSchema,
-                optional: true,
-                notEmpty: false
-            },
-            district: {
-                ...districtSchema,
-                optional: true,
-                notEmpty: false
-            },
-            ward: {
-                ...wardSchema,
-                optional: true,
-                notEmpty: false
-            },
-            specific_address: {
-                ...specificAddressSchema,
-                optional: true,
-                notEmpty: false
-            }
+            name: nameSchema,
+            phone_number: phoneNumberSchema,
+            email: emailSchema,
+            // province: {
+            //     ...provinceSchema,
+            //     optional: true,
+            //     notEmpty: false
+            // },
+            // district: {
+            //     ...districtSchema,
+            //     optional: true,
+            //     notEmpty: false
+            // },
+            // ward: {
+            //     ...wardSchema,
+            //     optional: true,
+            //     notEmpty: false
+            // },
+            specific_address: specificAddressSchema
         },
         ['params', 'body']
     )

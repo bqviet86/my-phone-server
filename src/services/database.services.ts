@@ -8,6 +8,8 @@ import Brand from '~/models/schemas/Brand.schema'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import Phone from '~/models/schemas/Phone.schema'
 import Cart from '~/models/schemas/Cart.schema'
+import Payment from '~/models/schemas/Payments.schema'
+import Order from '~/models/schemas/Orders.schema'
 
 config()
 
@@ -73,6 +75,14 @@ class DatabaseService {
 
     get carts(): Collection<Cart> {
         return this.db.collection(process.env.DB_CARTS_COLLECTION as string)
+    }
+
+    get payments(): Collection<Payment> {
+        return this.db.collection(process.env.DB_PAYMENTS_COLLECTION as string)
+    }
+
+    get orders(): Collection<Order> {
+        return this.db.collection(process.env.DB_ORDERS_COLLECTION as string)
     }
 }
 

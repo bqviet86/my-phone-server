@@ -12,7 +12,9 @@ import {
     isPhoneOptionIdMatched,
     updateCartValidator
 } from '~/middlewares/carts.middlewares'
+import { filterMiddleware } from '~/middlewares/common.middlewares'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
+import { UpdateCartReqBody } from '~/models/requests/Cart.request'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const cartsRouter = Router()
@@ -33,7 +35,7 @@ cartsRouter.post(
 )
 
 /**
- * Description: Get cart
+ * Description: Get carts
  * Path: /
  * Method: GET
  * Header: { Authorization: Bearer <access_token> }
@@ -53,6 +55,7 @@ cartsRouter.patch(
     accessTokenValidator,
     updateCartValidator,
     isPhoneOptionIdMatched,
+    filterMiddleware<UpdateCartReqBody>(['phone_option_id', 'quantity']),
     wrapRequestHandler(updateCartController)
 )
 

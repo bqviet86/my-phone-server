@@ -102,7 +102,7 @@ phonesRouter.post(
  * Method: GET
  * Params: GetPhoneReqParams
  */
-phonesRouter.get('/:phone_id', paginationValidator, getPhoneValidator, wrapRequestHandler(getPhoneController))
+phonesRouter.get('/:phone_id', getPhoneValidator, wrapRequestHandler(getPhoneController))
 
 /**
  * Description: Get all phones
@@ -114,7 +114,7 @@ phonesRouter.get('/:phone_id', paginationValidator, getPhoneValidator, wrapReque
  *     brands: '_id1|_id2|_id3' or ''
  * }
  */
-phonesRouter.get('/', getAllPhonesValidator, wrapRequestHandler(getAllPhonesController))
+phonesRouter.get('/', paginationValidator, getAllPhonesValidator, wrapRequestHandler(getAllPhonesController))
 
 /**
  * Description: Update a phone
