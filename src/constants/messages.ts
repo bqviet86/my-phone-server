@@ -178,3 +178,20 @@ export const CARTS_MESSAGES = {
     UPDATE_CART_SUCCESSFULLY: 'Cập nhật giỏ hàng thành công',
     DELETE_CART_SUCCESSFULLY: 'Xóa sản phẩm khỏi giỏ hàng thành công'
 }
+
+export const ORDERS_MESSAGES = {
+    INVALID_PAYMENT_METHOD: 'Phương thức thanh toán không hợp lệ',
+    CARTS_IS_EMPTY: 'Giỏ hàng không được để trống',
+    INVALID_CARTS_ID: 'ID giỏ hàng không hợp lệ',
+    HAVE_CART_NOT_FOUND: 'Có giỏ hàng không được tìm thấy',
+    INVALID_ADDRESS_ID: 'ID địa chỉ không hợp lệ',
+    ADDRESS_NOT_FOUND: 'Không tìm thấy địa chỉ',
+    CONTENT_MUST_BE_A_STRING: 'Nội dung phải là một chuỗi',
+    CONTENT_MUST_BE_FROM_0_TO_500_CHARACTERS: 'Nội dung phải có độ dài từ 0 đến 500 ký tự',
+    INVALID_ORDER_ID: 'ID đơn hàng không hợp lệ',
+    ORDER_NOT_FOUND: 'Không tìm thấy đơn hàng',
+
+    CREATE_ORDER_SUCCESSFULLY: 'Tạo đơn hàng thành công',
+    ORDER_SUCCESS: 'Đặt hàng thành công',
+    ORDER_FAIL: 'Đặt hàng không thành công'
+}

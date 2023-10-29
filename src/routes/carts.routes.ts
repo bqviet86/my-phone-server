@@ -9,6 +9,7 @@ import {
 import {
     addToCartValidator,
     deleteCartValidator,
+    getCartValidator,
     isPhoneOptionIdMatched,
     updateCartValidator
 } from '~/middlewares/carts.middlewares'
@@ -39,8 +40,11 @@ cartsRouter.post(
  * Path: /
  * Method: GET
  * Header: { Authorization: Bearer <access_token> }
+ * Query: {
+ *     carts: '_id1|_id2|_id3' or ''
+ * }
  */
-cartsRouter.get('/', accessTokenValidator, wrapRequestHandler(getCartController))
+cartsRouter.get('/', accessTokenValidator, getCartValidator, wrapRequestHandler(getCartController))
 
 /**
  * Description: Update cart

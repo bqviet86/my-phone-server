@@ -577,9 +577,9 @@ export const createAddressValidator = validate(
             name: nameSchema,
             phone_number: phoneNumberSchema,
             email: emailSchema,
-            province: provinceSchema,
-            district: districtSchema,
-            ward: wardSchema,
+            // province: provinceSchema,
+            // district: districtSchema,
+            // ward: wardSchema,
             specific_address: specificAddressSchema
         },
         ['body']

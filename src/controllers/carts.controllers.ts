@@ -9,6 +9,7 @@ import {
     UpdateCartReqParams
 } from '~/models/requests/Cart.request'
 import { TokenPayload } from '~/models/requests/User.requests'
+import Cart from '~/models/schemas/Cart.schema'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import cartService from '~/services/carts.services'
 
@@ -28,12 +29,11 @@ export const addToCartController = async (req: Request<ParamsDictionary, any, Ad
 }
 
 export const getCartController = async (req: Request, res: Response) => {
-    const { user_id } = req.decoded_authorization as TokenPayload
-    const result = await cartService.getCart(user_id)
+    const carts = req.carts as Cart[]
 
     return res.json({
         message: CARTS_MESSAGES.GET_CART_SUCCESSFULLY,
-        result
+        result: carts
     })
 }
 

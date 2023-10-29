@@ -5,7 +5,7 @@ import { OrderStatus } from '~/constants/enums'
 interface OrderType {
     _id?: ObjectId
     user_id: ObjectId
-    carts: string[]
+    carts: ObjectId[]
     address: ObjectId
     content: string
     status: OrderStatus
@@ -28,7 +28,7 @@ export default class Order {
 
         this._id = order._id
         this.user_id = order.user_id
-        this.carts = order.carts.map((cart) => new ObjectId(cart))
+        this.carts = order.carts
         this.address = order.address
         this.content = order.content
         this.status = order.status

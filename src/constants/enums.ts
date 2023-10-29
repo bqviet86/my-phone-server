@@ -36,6 +36,11 @@ export enum PaymentMethod {
     Cash // Tiền mặt
 }
 
+export enum PaymentStatus {
+    PendingPayment, // Chưa thanh toán
+    Paid // Đã thanh toán
+}
+
 export enum OrderStatus {
     PendingPayment, // Chờ thanh toán (chỉ áp dụng cho thanh toán bằng thẻ tín dụng)
     PendingConfirmation, // Chờ xác nhận

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamSchema, checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 
+import { CartStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CARTS_MESSAGES } from '~/constants/messages'
 import { phoneIdSchema, phoneOptionIdSchema } from './common.middlewares'
@@ -136,6 +137,126 @@ export const isPhoneOptionIdMatched = (req: Request, res: Response, next: NextFu
 
     next()
 }
+
+export const getCartValidator = validate(
+    checkSchema(
+        {
+            carts: {
+                optional: true,
+                custom: {
+                    options: async (value: string, { req }) => {
+                        const cartValues = value ? value.split('|') : []
+
+                        if (cartValues.length > 0 && !cartValues.every((item) => ObjectId.isValid(item))) {
+                            throw new ErrorWithStatus({
+                                message: CARTS_MESSAGES.INVALID_CART_ID,
+                                status: HTTP_STATUS.BAD_REQUEST
+                            })
+                        }
+
+                        const { user_id } = (req as Request).decoded_authorization as TokenPayload
+                        const carts = await databaseService.carts
+                            .aggregate<Cart>([
+                                {
+                                    $match: {
+                                        ...(cartValues.length > 0 && {
+                                            _id: {
+                                                $in: cartValues.map((item) => new ObjectId(item))
+                                            }
+                                        }),
+                                        user_id: new ObjectId(user_id),
+                                        cart_status: CartStatus.Pending
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'phones',
+                                        localField: 'phone_id',
+                                        foreignField: '_id',
+                                        as: 'phone'
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'phone_options',
+                                        localField: 'phone_option_id',
+                                        foreignField: '_id',
+                                        as: 'phone_option'
+                                    }
+                                },
+                                {
+                                    $unwind: '$phone'
+                                },
+                                {
+                                    $unwind: '$phone_option'
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'brands',
+                                        localField: 'phone.brand',
+                                        foreignField: '_id',
+                                        as: 'phone.brand'
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'phone_options',
+                                        localField: 'phone.options',
+                                        foreignField: '_id',
+                                        as: 'phone.options'
+                                    }
+                                },
+                                {
+                                    $unwind: '$phone.brand'
+                                },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        phone: {
+                                            _id: 1,
+                                            name: 1,
+                                            brand: 1,
+                                            options: 1
+                                        },
+                                        phone_option: {
+                                            _id: 1,
+                                            color: 1,
+                                            capacity: 1,
+                                            price: 1,
+                                            price_before_discount: 1,
+                                            images: 1
+                                        },
+                                        quantity: 1,
+                                        total_price: 1,
+                                        created_at: 1,
+                                        updated_at: 1
+                                    }
+                                },
+                                {
+                                    $sort: {
+                                        updated_at: -1
+                                    }
+                                }
+                            ])
+                            .toArray()
+
+                        if (cartValues.length > 0 && carts.length !== cartValues.length) {
+                            throw new ErrorWithStatus({
+                                message: CARTS_MESSAGES.CART_NOT_FOUND,
+                                status: HTTP_STATUS.NOT_FOUND
+                            })
+                        }
+
+                        ;(req as Request).carts = carts
+
+                        return true
+                    }
+                }
+            }
+        },
+        ['query']
+    )
+)
 
 export const updateCartValidator = validate(
     checkSchema(
