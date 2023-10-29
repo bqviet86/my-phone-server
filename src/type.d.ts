@@ -6,6 +6,7 @@ import PhoneOption from './models/schemas/PhoneOption.schema'
 import Brand from './models/schemas/Brand.schema'
 import Phone from './models/schemas/Phone.schema'
 import Cart from './models/schemas/Cart.schema'
+import Order from './models/schemas/Orders.schema'
 
 declare module 'express' {
     interface Request {
@@ -20,5 +21,6 @@ declare module 'express' {
         brands?: Brand[]
         phone?: Phone
         carts?: Cart[]
+        order?: Order
     }
 }

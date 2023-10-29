@@ -6,7 +6,7 @@ import moment from 'moment'
 import qs from 'qs'
 import crypto from 'crypto'
 
-import { CartStatus, OrderStatus, PaymentMethod, PaymentStatus } from '~/constants/enums'
+import { CartStatus, OrderStatus, PaymentMethod, PaymentStatus, UserRole } from '~/constants/enums'
 import { CreateOrderReqBody } from '~/models/requests/Order.request'
 import Cart from '~/models/schemas/Cart.schema'
 import Order from '~/models/schemas/Orders.schema'
@@ -99,7 +99,7 @@ class OrderService {
                 user_id: new ObjectId(user_id),
                 carts: cart_ids,
                 address: new ObjectId(payload.address),
-                status:
+                order_status:
                     payment_method === PaymentMethod.CreditCard
                         ? OrderStatus.PendingPayment
                         : OrderStatus.PendingConfirmation
@@ -186,7 +186,7 @@ class OrderService {
             // Tìm kiếm order có trạng thái PendingPayment (chờ thanh toán)
             const order = await databaseService.orders.findOne({
                 _id: new ObjectId(order_id),
-                status: OrderStatus.PendingPayment
+                order_status: OrderStatus.PendingPayment
             })
 
             if (payment && order) {
@@ -213,7 +213,7 @@ class OrderService {
                         },
                         {
                             $set: {
-                                status: OrderStatus.PendingConfirmation
+                                order_status: OrderStatus.PendingConfirmation
                             },
                             $currentDate: {
                                 updated_at: true
@@ -232,6 +232,176 @@ class OrderService {
         return {
             success: false
         }
+    }
+
+    async getAllOrders({ user_id, role, order_status }: { user_id: string; role: UserRole; order_status: string }) {
+        const $match = {
+            ...(role === UserRole.User && {
+                user_id: new ObjectId(user_id)
+            }),
+            ...(order_status && {
+                order_status: Number(order_status)
+            })
+        }
+        const orders = await databaseService.orders
+            .aggregate<Order>([
+                {
+                    $match: $match
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user_id',
+                        foreignField: '_id',
+                        as: 'user'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$user'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'addresses',
+                        localField: 'address',
+                        foreignField: '_id',
+                        as: 'address'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$address'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'carts',
+                        localField: 'carts',
+                        foreignField: '_id',
+                        as: 'carts'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$carts'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'phones',
+                        localField: 'carts.phone_id',
+                        foreignField: '_id',
+                        as: 'carts.phone'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$carts.phone'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'brands',
+                        localField: 'carts.phone.brand',
+                        foreignField: '_id',
+                        as: 'carts.phone.brand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$carts.phone.brand'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'phone_options',
+                        localField: 'carts.phone_option_id',
+                        foreignField: '_id',
+                        as: 'carts.phone_option'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$carts.phone_option'
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        user: {
+                            $first: '$user'
+                        },
+                        address: {
+                            $first: '$address'
+                        },
+                        carts: {
+                            $push: '$carts'
+                        },
+                        content: {
+                            $first: '$content'
+                        },
+                        order_status: {
+                            $first: '$order_status'
+                        },
+                        created_at: {
+                            $first: '$created_at'
+                        },
+                        updated_at: {
+                            $first: '$updated_at'
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'payments',
+                        localField: '_id',
+                        foreignField: 'order_id',
+                        as: 'payment'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$payment'
+                    }
+                },
+                {
+                    $project: {
+                        user: {
+                            password: 0,
+                            email_verify_token: 0,
+                            forgot_password_token: 0
+                        },
+                        carts: {
+                            user_id: 0,
+                            phone_id: 0,
+                            phone_option_id: 0,
+                            phone: {
+                                price: 0,
+                                price_before_discount: 0,
+                                image: 0,
+                                options: 0,
+                                description: 0,
+                                screen_type: 0,
+                                resolution: 0,
+                                operating_system: 0,
+                                memory: 0,
+                                chip: 0,
+                                battery: 0,
+                                rear_camera: 0,
+                                front_camera: 0,
+                                wifi: 0,
+                                jack_phone: 0,
+                                size: 0,
+                                weight: 0
+                            }
+                        }
+                    }
+                }
+            ])
+            .toArray()
+
+        return orders
     }
 }
 

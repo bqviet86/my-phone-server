@@ -1,8 +1,13 @@
 import { Router } from 'express'
 
-import { createOrderController, orderSuccessController } from '~/controllers/orders.controllers'
+import {
+    createOrderController,
+    getAllOrdersController,
+    getOrderController,
+    orderSuccessController
+} from '~/controllers/orders.controllers'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
-import { createOrderValidator } from '~/middlewares/orders.middlewares'
+import { createOrderValidator, getAllOrdersValidator, getOrderValidator } from '~/middlewares/orders.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const ordersRouter = Router()
@@ -30,5 +35,25 @@ ordersRouter.post(
  * Query: VNPAY query parameters
  */
 ordersRouter.patch('/success', accessTokenValidator, wrapRequestHandler(orderSuccessController))
+
+/**
+ * Description: Get order
+ * Path: /:order_id
+ * Method: GET
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: GetOrderReqParams
+ */
+ordersRouter.get('/:order_id', accessTokenValidator, getOrderValidator, wrapRequestHandler(getOrderController))
+
+/**
+ * Description: Get all orders
+ * Path: /
+ * Method: GET
+ * Header: { Authorization: Bearer <access_token> }
+ * Query: {
+ *     order_status: OrderStatus
+ * }
+ */
+ordersRouter.get('/', accessTokenValidator, getAllOrdersValidator, wrapRequestHandler(getAllOrdersController))
 
 export default ordersRouter

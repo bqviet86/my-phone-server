@@ -8,7 +8,7 @@ interface OrderType {
     carts: ObjectId[]
     address: ObjectId
     content: string
-    status: OrderStatus
+    order_status: OrderStatus
     created_at?: Date
     updated_at?: Date
 }
@@ -19,7 +19,7 @@ export default class Order {
     carts: ObjectId[]
     address: ObjectId
     content: string
-    status: OrderStatus
+    order_status: OrderStatus
     created_at: Date
     updated_at: Date
 
@@ -31,7 +31,7 @@ export default class Order {
         this.carts = order.carts
         this.address = order.address
         this.content = order.content
-        this.status = order.status
+        this.order_status = order.order_status
         this.created_at = order.created_at || date
         this.updated_at = order.updated_at || date
     }

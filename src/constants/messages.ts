@@ -190,8 +190,11 @@ export const ORDERS_MESSAGES = {
     CONTENT_MUST_BE_FROM_0_TO_500_CHARACTERS: 'Nội dung phải có độ dài từ 0 đến 500 ký tự',
     INVALID_ORDER_ID: 'ID đơn hàng không hợp lệ',
     ORDER_NOT_FOUND: 'Không tìm thấy đơn hàng',
+    INVALID_ORDER_STATUS: 'Trạng thái đơn hàng không hợp lệ',
 
     CREATE_ORDER_SUCCESSFULLY: 'Tạo đơn hàng thành công',
     ORDER_SUCCESS: 'Đặt hàng thành công',
-    ORDER_FAIL: 'Đặt hàng không thành công'
+    ORDER_FAIL: 'Đặt hàng không thành công',
+    GET_ORDER_SUCCESSFULLY: 'Lấy đơn hàng thành công',
+    GET_ALL_ORDERS_SUCCESSFULLY: 'Lấy tất cả đơn hàng thành công'
 }
