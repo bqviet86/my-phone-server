@@ -79,9 +79,12 @@ export const BRANDS_MESSAGES = {
     NAME_IS_REQUIRED: 'Tên không được để trống',
     NAME_MUST_BE_A_STRING: 'Tên phải là một chuỗi',
     NAME_LENGTH_MUST_BE_FROM_1_TO_20: 'Tên phải có độ dài từ 1 đến 20 ký tự',
+    BRAND_ID_IS_INVALID: 'ID thương hiệu không hợp lệ',
+    BRAND_IS_NOT_FOUND: 'Không tìm thấy thương hiệu',
 
     CREATE_BRAND_SUCCESS: 'Tạo thương hiệu thành công',
-    GET_ALL_BRAND_SUCCESS: 'Lấy tất cả thương hiệu thành công'
+    GET_ALL_BRAND_SUCCESS: 'Lấy tất cả thương hiệu thành công',
+    DELETE_BRAND_SUCCESS: 'Xóa thương hiệu thành công'
 }
 
 export const PHONES_MESSAGES = {

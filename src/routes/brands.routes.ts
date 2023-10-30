@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { createBrandController, getAllBrandController } from '~/controllers/brands.controllers'
-import { createBrandValidator } from '~/middlewares/brands.middlewares'
+import { createBrandController, deleteBrandController, getAllBrandController } from '~/controllers/brands.controllers'
+import { createBrandValidator, deleteBrandValidator } from '~/middlewares/brands.middlewares'
 import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -28,5 +28,20 @@ brandsRouter.post(
  * Method: GET
  */
 brandsRouter.get('/', wrapRequestHandler(getAllBrandController))
+
+/**
+ * Description: Delete a brand
+ * Path: /:brand_id
+ * Method: DELETE
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: { brand_id: string }
+ */
+brandsRouter.delete(
+    '/brand_id',
+    accessTokenValidator,
+    isAdminValidator,
+    deleteBrandValidator,
+    wrapRequestHandler(deleteBrandController)
+)
 
 export default brandsRouter
