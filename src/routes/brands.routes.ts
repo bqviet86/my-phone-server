@@ -37,7 +37,7 @@ brandsRouter.get('/', wrapRequestHandler(getAllBrandController))
  * Params: { brand_id: string }
  */
 brandsRouter.delete(
-    '/brand_id',
+    '/:brand_id',
     accessTokenValidator,
     isAdminValidator,
     deleteBrandValidator,

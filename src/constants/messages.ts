@@ -1,5 +1,5 @@
 export const USERS_MESSAGES = {
-    VALIDATION_ERROR: 'Lỗi xác thực',
+    VALIDATION_ERROR: 'Bạn cung cấp dữ liệu chưa hợp lệ',
     NAME_IS_REQUIRED: 'Tên không được để trống',
     NAME_MUST_BE_A_STRING: 'Tên phải là một chuỗi',
     NAME_LENGTH_MUST_BE_FROM_1_TO_100: 'Tên phải có độ dài từ 1 đến 100 ký tự',

@@ -147,6 +147,11 @@ class PhoneService {
                         $unwind: '$brand'
                     },
                     {
+                        $sort: {
+                            created_at: -1
+                        }
+                    },
+                    {
                         $skip: (page - 1) * limit
                     },
                     {
