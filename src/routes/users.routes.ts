@@ -7,6 +7,7 @@ import {
     forgotPasswordAdminController,
     forgotPasswordController,
     getAddressController,
+    getAllUsersController,
     getMeController,
     loginAdminController,
     loginController,
@@ -24,7 +25,7 @@ import {
     verifyForgotPasswordAdminController,
     verifyForgotPasswordController
 } from '~/controllers/users.controllers'
-import { filterMiddleware } from '~/middlewares/common.middlewares'
+import { filterMiddleware, paginationValidator } from '~/middlewares/common.middlewares'
 import {
     accessTokenValidator,
     changePasswordValidator,
@@ -32,6 +33,7 @@ import {
     deleteAddressValidator,
     emailVerifyTokenValidator,
     forgotPasswordValidator,
+    getAllUsersValidator,
     isAdminValidator,
     loginValidator,
     refreshTokenValidator,
@@ -138,6 +140,22 @@ usersRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(ref
  * Header: { Authorization: Bearer <access_token> }
  */
 usersRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
+
+/**
+ * Description: Get all users
+ * Path: /
+ * Method: GET
+ * Header: { Authorization: Bearer <access_token> }
+ * Query: { page: number, limit: number, search: string }
+ */
+usersRouter.get(
+    '/',
+    accessTokenValidator,
+    isAdminValidator,
+    paginationValidator,
+    getAllUsersValidator,
+    wrapRequestHandler(getAllUsersController)
+)
 
 /**
  * Description: Update my avatar

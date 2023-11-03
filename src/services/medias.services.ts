@@ -15,7 +15,7 @@ class MediaService {
     async uploadImage({
         req,
         maxFiles,
-        maxFileSize = 1024 * 1024 // 1mb
+        maxFileSize = 10 * 1024 * 1024 // 10mb
     }: {
         req: Request
         maxFiles: number

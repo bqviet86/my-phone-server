@@ -21,7 +21,8 @@ import {
     VerifyForgotPasswordReqBody,
     CreateAddressReqBody,
     UpdateAddressReqParams,
-    DeleteAddressReqParams
+    DeleteAddressReqParams,
+    GetAllUsersReqQuery
 } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schema'
 import databaseService from '~/services/database.services'
@@ -143,6 +144,23 @@ export const getMeController = async (req: Request, res: Response) => {
 
     return res.json({
         message: USERS_MESSAGES.GET_ME_SUCCESS,
+        result
+    })
+}
+
+export const getAllUsersController = async (
+    req: Request<ParamsDictionary, any, any, GetAllUsersReqQuery>,
+    res: Response
+) => {
+    const { page, limit, search } = req.query
+    const result = await usersService.getAllUsers({
+        page: Number(page),
+        limit: Number(limit),
+        search
+    })
+
+    return res.json({
+        message: USERS_MESSAGES.GET_ALL_USERS_SUCCESS,
         result
     })
 }

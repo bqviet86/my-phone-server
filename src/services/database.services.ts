@@ -34,15 +34,16 @@ class DatabaseService {
     }
 
     async indexUser() {
-        const exists = await this.users.indexExists(['email_1'])
+        const exists = await this.users.indexExists(['name_text', 'email_1'])
 
         if (!exists) {
+            this.users.createIndex({ name: 'text' }, { default_language: 'none' })
             this.users.createIndex({ email: 1 }, { unique: true })
         }
     }
 
     async indexPhones() {
-        const exists = await this.phones.indexExists(['content_text'])
+        const exists = await this.phones.indexExists(['name_text'])
 
         if (!exists) {
             this.phones.createIndex({ name: 'text' }, { default_language: 'none' })

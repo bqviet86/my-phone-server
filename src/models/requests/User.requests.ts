@@ -1,4 +1,4 @@
-import { ParamsDictionary } from 'express-serve-static-core'
+import { ParamsDictionary, Query } from 'express-serve-static-core'
 import { JwtPayload } from 'jsonwebtoken'
 
 import { TokenTypes, Sex, UserVerifyStatus, UserRole } from '~/constants/enums'
@@ -51,6 +51,12 @@ export interface ResetPasswordReqBody {
 
 export interface RefreshTokenReqBody {
     refresh_token: string
+}
+
+export interface GetAllUsersReqQuery extends Query {
+    page: string
+    limit: string
+    search?: string
 }
 
 export interface UpdateMeReqBody {

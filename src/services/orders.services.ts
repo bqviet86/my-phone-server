@@ -397,6 +397,12 @@ class OrderService {
                             }
                         }
                     }
+                },
+                {
+                    // Sắp xếp theo ngày tạo giảm dần
+                    $sort: {
+                        created_at: -1
+                    }
                 }
             ])
             .toArray()

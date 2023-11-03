@@ -370,6 +370,36 @@ class UserService {
         return user
     }
 
+    async getAllUsers({ page, limit, search }: { page: number; limit: number; search?: string }) {
+        // $text for name and regex for email
+        const users = await databaseService.users
+            .find({
+                ...(search && {
+                    $or: [
+                        {
+                            $text: {
+                                $search: search
+                            }
+                        },
+                        {
+                            email: {
+                                $regex: search,
+                                $options: 'i'
+                            }
+                        }
+                    ]
+                }),
+                role: {
+                    $ne: UserRole.Admin
+                }
+            })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .toArray()
+
+        return users
+    }
+
     async updateAvatar(user_id: string, req: Request) {
         // Xoá avatar cũ
         const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })

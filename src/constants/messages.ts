@@ -43,6 +43,7 @@ export const USERS_MESSAGES = {
     SPECIFIC_ADDRESS_IS_REQUIRED: 'Địa chỉ cụ thể không được để trống',
     SPECIFIC_ADDRESS_MUST_BE_A_STRING: 'Địa chỉ cụ thể phải là một chuỗi',
     USER_NOT_ADMIN: 'Người dùng không phải là admin',
+    SEARCH_MUST_BE_A_STRING: 'Từ khóa tìm kiếm (search) phải là một chuỗi',
 
     REGISTER_SUCCESS: 'Đăng ký thành công',
     LOGIN_SUCCESS: 'Đăng nhập thành công',
@@ -55,6 +56,7 @@ export const USERS_MESSAGES = {
     RESET_PASSWORD_SUCCESS: 'Đặt lại mật khẩu thành công',
     REFRESH_TOKEN_SUCCESS: 'Refresh token thành công',
     GET_ME_SUCCESS: 'Lấy thông tin người dùng thành công',
+    GET_ALL_USERS_SUCCESS: 'Lấy tất cả người dùng thành công',
     UPDATE_AVATAR_SUCCESS: 'Cập nhật ảnh đại diện thành công',
     UPDATE_ME_SUCCESS: 'Cập nhật thông tin người dùng thành công',
     CHANGE_PASSWORD_SUCCESS: 'Đổi mật khẩu thành công',

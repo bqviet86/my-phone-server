@@ -521,6 +521,20 @@ export const resetPasswordValidator = validate(
     )
 )
 
+export const getAllUsersValidator = validate(
+    checkSchema(
+        {
+            search: {
+                optional: true,
+                isString: {
+                    errorMessage: USERS_MESSAGES.SEARCH_MUST_BE_A_STRING
+                }
+            }
+        },
+        ['query']
+    )
+)
+
 export const updateMeValidator = validate(
     checkSchema(
         {

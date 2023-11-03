@@ -108,7 +108,12 @@ export const paginationValidator = validate(
     checkSchema(
         {
             page: {
-                isNumeric: true,
+                notEmpty: {
+                    errorMessage: 'Page không được để trống'
+                },
+                isNumeric: {
+                    errorMessage: 'Page phải là một số'
+                },
                 custom: {
                     options: async (value: number) => {
                         const num = Number(value)
@@ -122,7 +127,12 @@ export const paginationValidator = validate(
                 }
             },
             limit: {
-                isNumeric: true,
+                notEmpty: {
+                    errorMessage: 'Limit không được để trống'
+                },
+                isNumeric: {
+                    errorMessage: 'Limit phải là một số'
+                },
                 custom: {
                     options: async (value: number) => {
                         const num = Number(value)
