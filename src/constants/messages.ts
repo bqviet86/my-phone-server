@@ -203,5 +203,6 @@ export const ORDERS_MESSAGES = {
     ORDER_FAIL: 'Đặt hàng không thành công',
     GET_ORDER_SUCCESSFULLY: 'Lấy đơn hàng thành công',
     GET_ALL_ORDERS_SUCCESSFULLY: 'Lấy tất cả đơn hàng thành công',
-    UPDATE_ORDER_SUCCESSFULLY: 'Cập nhật đơn hàng thành công'
+    UPDATE_ORDER_SUCCESSFULLY: 'Cập nhật đơn hàng thành công',
+    CONFIRM_PAYMENT_SUCCESSFULLY: 'Xác nhận thanh toán thành công'
 }

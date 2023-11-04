@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import { Query } from 'express-serve-static-core'
 import { config } from 'dotenv'
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 import moment from 'moment'
 import qs from 'qs'
 import crypto from 'crypto'
@@ -412,13 +412,13 @@ class OrderService {
 
     async updateOrder({
         order_id,
-        carts,
         payment_method,
+        carts,
         payload
     }: {
         order_id: string
-        carts: Cart[]
         payment_method: number
+        carts: Cart[]
         payload: CreateOrderReqBody
     }) {
         const [order, payment] = await Promise.all([
@@ -466,7 +466,47 @@ class OrderService {
             )
         ])
 
-        return { order, payment }
+        return {
+            order: order as WithId<Order>,
+            payment: payment as WithId<Payment>
+        }
+    }
+
+    async confirmPayment({
+        req,
+        order_id,
+        payment_method,
+        carts,
+        payload
+    }: {
+        req: Request
+        order_id: string
+        payment_method: number
+        carts: Cart[]
+        payload: CreateOrderReqBody
+    }) {
+        const { order, payment } = await this.updateOrder({
+            order_id,
+            payment_method,
+            carts,
+            payload
+        })
+
+        // Tạo url thanh toán
+        let payment_url = ''
+
+        if (payment_method === PaymentMethod.CreditCard) {
+            payment_url = this.createPaymentUrl({
+                req,
+                order_id: order._id.toString(),
+                amount: payment.total_price
+            })
+        }
+
+        return {
+            order,
+            payment_url
+        }
     }
 }
 

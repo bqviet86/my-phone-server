@@ -77,13 +77,34 @@ export const updateOrderController = async (
 
     const result = await orderService.updateOrder({
         order_id,
-        carts,
         payment_method: Number(payment_method),
+        carts,
         payload: req.body
     })
 
     res.json({
         message: ORDERS_MESSAGES.UPDATE_ORDER_SUCCESSFULLY,
+        result
+    })
+}
+
+export const confirmPaymentController = async (
+    req: Request<UpdateOrderReqParams, any, UpdateOrderReqBody>,
+    res: Response
+) => {
+    const { order_id, payment_method } = req.params
+    const carts = req.carts as Cart[]
+
+    const result = await orderService.confirmPayment({
+        req,
+        order_id,
+        payment_method: Number(payment_method),
+        carts,
+        payload: req.body
+    })
+
+    res.json({
+        message: ORDERS_MESSAGES.CONFIRM_PAYMENT_SUCCESSFULLY,
         result
     })
 }

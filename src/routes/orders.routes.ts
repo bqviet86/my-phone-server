@@ -1,6 +1,7 @@
 import { Router } from 'express'
 
 import {
+    confirmPaymentController,
     createOrderController,
     getAllOrdersController,
     getOrderController,
@@ -77,6 +78,22 @@ ordersRouter.put(
     updateOrderValidator,
     isAllowedToUpdateOrder,
     wrapRequestHandler(updateOrderController)
+)
+
+/**
+ * Description: Confirm payment
+ * Path: /confirm-payment/:order_id/:payment_method
+ * Method: PUT
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: UpdateOrderReqParams
+ * Body: UpdateOrderReqBody
+ */
+ordersRouter.put(
+    '/confirm-payment/:order_id/:payment_method',
+    accessTokenValidator,
+    updateOrderValidator,
+    isAllowedToUpdateOrder,
+    wrapRequestHandler(confirmPaymentController)
 )
 
 export default ordersRouter
