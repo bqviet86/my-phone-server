@@ -13,3 +13,14 @@ export interface CreateOrderReqBody {
 export interface GetAllOrderReqQuery extends Query {
     order_status: string
 }
+
+export interface UpdateOrderReqParams extends ParamsDictionary {
+    order_id: string
+    payment_method: string
+}
+
+export interface UpdateOrderReqBody {
+    carts: string[]
+    address: string
+    content: string
+}

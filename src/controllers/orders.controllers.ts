@@ -2,7 +2,13 @@ import { Request, Response } from 'express'
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 
 import { ORDERS_MESSAGES } from '~/constants/messages'
-import { CreateOrderReqBody, CreateOrderReqParams, GetAllOrderReqQuery } from '~/models/requests/Order.request'
+import {
+    CreateOrderReqBody,
+    CreateOrderReqParams,
+    GetAllOrderReqQuery,
+    UpdateOrderReqBody,
+    UpdateOrderReqParams
+} from '~/models/requests/Order.request'
 import { TokenPayload } from '~/models/requests/User.requests'
 import Cart from '~/models/schemas/Cart.schema'
 import Order from '~/models/schemas/Orders.schema'
@@ -58,6 +64,26 @@ export const getAllOrdersController = async (
 
     res.json({
         message: ORDERS_MESSAGES.GET_ALL_ORDERS_SUCCESSFULLY,
+        result
+    })
+}
+
+export const updateOrderController = async (
+    req: Request<UpdateOrderReqParams, any, UpdateOrderReqBody>,
+    res: Response
+) => {
+    const { order_id, payment_method } = req.params
+    const carts = req.carts as Cart[]
+
+    const result = await orderService.updateOrder({
+        order_id,
+        carts,
+        payment_method: Number(payment_method),
+        payload: req.body
+    })
+
+    res.json({
+        message: ORDERS_MESSAGES.UPDATE_ORDER_SUCCESSFULLY,
         result
     })
 }

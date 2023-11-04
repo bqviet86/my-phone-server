@@ -409,6 +409,65 @@ class OrderService {
 
         return orders
     }
+
+    async updateOrder({
+        order_id,
+        carts,
+        payment_method,
+        payload
+    }: {
+        order_id: string
+        carts: Cart[]
+        payment_method: number
+        payload: CreateOrderReqBody
+    }) {
+        const [order, payment] = await Promise.all([
+            databaseService.orders.findOneAndUpdate(
+                {
+                    _id: new ObjectId(order_id)
+                },
+                {
+                    $set: {
+                        ...payload,
+                        carts: payload.carts.map((cart) => new ObjectId(cart)),
+                        address: new ObjectId(payload.address),
+                        order_status:
+                            payment_method === PaymentMethod.CreditCard
+                                ? OrderStatus.PendingPayment
+                                : OrderStatus.PendingConfirmation
+                    },
+                    $currentDate: {
+                        updated_at: true
+                    }
+                },
+                {
+                    returnDocument: 'after',
+                    includeResultMetadata: false
+                }
+            ),
+            databaseService.payments.findOneAndUpdate(
+                {
+                    order_id: new ObjectId(order_id)
+                },
+                {
+                    $set: {
+                        payment_method,
+                        total_price: carts.reduce((total, cart) => total + cart.total_price, 0),
+                        payment_status: PaymentStatus.PendingPayment
+                    },
+                    $currentDate: {
+                        updated_at: true
+                    }
+                },
+                {
+                    returnDocument: 'after',
+                    includeResultMetadata: false
+                }
+            )
+        ])
+
+        return { order, payment }
+    }
 }
 
 const orderService = new OrderService()

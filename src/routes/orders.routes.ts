@@ -4,10 +4,17 @@ import {
     createOrderController,
     getAllOrdersController,
     getOrderController,
-    orderSuccessController
+    orderSuccessController,
+    updateOrderController
 } from '~/controllers/orders.controllers'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
-import { createOrderValidator, getAllOrdersValidator, getOrderValidator } from '~/middlewares/orders.middlewares'
+import {
+    createOrderValidator,
+    getAllOrdersValidator,
+    getOrderValidator,
+    isAllowedToUpdateOrder,
+    updateOrderValidator
+} from '~/middlewares/orders.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const ordersRouter = Router()
@@ -55,5 +62,21 @@ ordersRouter.get('/:order_id', accessTokenValidator, getOrderValidator, wrapRequ
  * }
  */
 ordersRouter.get('/', accessTokenValidator, getAllOrdersValidator, wrapRequestHandler(getAllOrdersController))
+
+/**
+ * Description: Update order
+ * Path: /:order_id/:payment_method
+ * Method: PUT
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: UpdateOrderReqParams
+ * Body: UpdateOrderReqBody
+ */
+ordersRouter.put(
+    '/:order_id/:payment_method',
+    accessTokenValidator,
+    updateOrderValidator,
+    isAllowedToUpdateOrder,
+    wrapRequestHandler(updateOrderController)
+)
 
 export default ordersRouter
