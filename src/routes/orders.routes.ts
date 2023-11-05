@@ -6,14 +6,16 @@ import {
     getAllOrdersController,
     getOrderController,
     orderSuccessController,
-    updateOrderController
+    updateOrderController,
+    updateOrderStatusController
 } from '~/controllers/orders.controllers'
-import { accessTokenValidator } from '~/middlewares/users.middlewares'
+import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
 import {
     createOrderValidator,
     getAllOrdersValidator,
     getOrderValidator,
     isAllowedToUpdateOrder,
+    updateOrderStatusValidator,
     updateOrderValidator
 } from '~/middlewares/orders.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
@@ -94,6 +96,23 @@ ordersRouter.put(
     updateOrderValidator,
     isAllowedToUpdateOrder,
     wrapRequestHandler(confirmPaymentController)
+)
+
+/**
+ * Description: Update order status
+ * Path: /:order_id
+ * Method: PATCH
+ * Header: { Authorization: Bearer <access_token> }
+ * Params: UpdateOrderStatusReqParams
+ * Body: UpdateOrderStatusReqBody
+ */
+ordersRouter.patch(
+    '/:order_id',
+    accessTokenValidator,
+    isAdminValidator,
+    updateOrderStatusValidator,
+    isAllowedToUpdateOrder,
+    wrapRequestHandler(updateOrderStatusController)
 )
 
 export default ordersRouter

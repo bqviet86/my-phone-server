@@ -393,3 +393,18 @@ export const isAllowedToUpdateOrder = (req: Request, res: Response, next: NextFu
 
     next()
 }
+
+export const updateOrderStatusValidator = validate(
+    checkSchema(
+        {
+            order_id: orderIdSchema,
+            order_status: {
+                isIn: {
+                    options: [orderStatusValues],
+                    errorMessage: ORDERS_MESSAGES.INVALID_ORDER_STATUS
+                }
+            }
+        },
+        ['params', 'body']
+    )
+)

@@ -204,5 +204,6 @@ export const ORDERS_MESSAGES = {
     GET_ORDER_SUCCESSFULLY: 'Lấy đơn hàng thành công',
     GET_ALL_ORDERS_SUCCESSFULLY: 'Lấy tất cả đơn hàng thành công',
     UPDATE_ORDER_SUCCESSFULLY: 'Cập nhật đơn hàng thành công',
-    CONFIRM_PAYMENT_SUCCESSFULLY: 'Xác nhận thanh toán thành công'
+    CONFIRM_PAYMENT_SUCCESSFULLY: 'Xác nhận thanh toán thành công',
+    UPDATE_ORDER_STATUS_SUCCESSFULLY: 'Cập nhật trạng thái đơn hàng thành công'
 }

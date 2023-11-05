@@ -7,7 +7,9 @@ import {
     CreateOrderReqParams,
     GetAllOrderReqQuery,
     UpdateOrderReqBody,
-    UpdateOrderReqParams
+    UpdateOrderReqParams,
+    UpdateOrderStatusReqBody,
+    UpdateOrderStatusReqParams
 } from '~/models/requests/Order.request'
 import { TokenPayload } from '~/models/requests/User.requests'
 import Cart from '~/models/schemas/Cart.schema'
@@ -105,6 +107,24 @@ export const confirmPaymentController = async (
 
     res.json({
         message: ORDERS_MESSAGES.CONFIRM_PAYMENT_SUCCESSFULLY,
+        result
+    })
+}
+
+export const updateOrderStatusController = async (
+    req: Request<UpdateOrderStatusReqParams, any, UpdateOrderStatusReqBody>,
+    res: Response
+) => {
+    const { order_id } = req.params
+    const { order_status } = req.body
+
+    const result = await orderService.updateOrderStatus({
+        order_id,
+        order_status: Number(order_status)
+    })
+
+    res.json({
+        message: ORDERS_MESSAGES.UPDATE_ORDER_STATUS_SUCCESSFULLY,
         result
     })
 }

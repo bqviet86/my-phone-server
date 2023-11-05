@@ -24,3 +24,11 @@ export interface UpdateOrderReqBody {
     address: string
     content: string
 }
+
+export interface UpdateOrderStatusReqParams extends ParamsDictionary {
+    order_id: string
+}
+
+export interface UpdateOrderStatusReqBody {
+    order_status: string
+}

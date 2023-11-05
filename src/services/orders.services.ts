@@ -508,6 +508,28 @@ class OrderService {
             payment_url
         }
     }
+
+    async updateOrderStatus({ order_id, order_status }: { order_id: string; order_status: OrderStatus }) {
+        const order = await databaseService.orders.findOneAndUpdate(
+            {
+                _id: new ObjectId(order_id)
+            },
+            {
+                $set: {
+                    order_status
+                },
+                $currentDate: {
+                    updated_at: true
+                }
+            },
+            {
+                returnDocument: 'after',
+                includeResultMetadata: false
+            }
+        )
+
+        return order as WithId<Order>
+    }
 }
 
 const orderService = new OrderService()
