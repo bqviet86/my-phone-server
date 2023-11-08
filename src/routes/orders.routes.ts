@@ -9,7 +9,7 @@ import {
     updateOrderController,
     updateOrderStatusController
 } from '~/controllers/orders.controllers'
-import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
+import { accessTokenValidator } from '~/middlewares/users.middlewares'
 import {
     createOrderValidator,
     getAllOrdersValidator,
@@ -109,7 +109,6 @@ ordersRouter.put(
 ordersRouter.patch(
     '/:order_id',
     accessTokenValidator,
-    isAdminValidator,
     updateOrderStatusValidator,
     isAllowedToUpdateOrder,
     wrapRequestHandler(updateOrderStatusController)

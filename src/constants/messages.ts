@@ -207,3 +207,7 @@ export const ORDERS_MESSAGES = {
     CONFIRM_PAYMENT_SUCCESSFULLY: 'Xác nhận thanh toán thành công',
     UPDATE_ORDER_STATUS_SUCCESSFULLY: 'Cập nhật trạng thái đơn hàng thành công'
 }
+
+export const INVOICE_MESSAGES = {
+    GET_INVOICE_SUCCESS: 'Lấy hóa đơn thành công'
+}

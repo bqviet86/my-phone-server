@@ -10,6 +10,7 @@ import brandsRouter from './routes/brands.routes'
 import phonesRouter from './routes/phones.routes'
 import cartsRouter from './routes/carts.routes'
 import ordersRouter from './routes/orders.routes'
+import invoicesRouter from './routes/invoices.routes'
 import searchRouter from './routes/search.routes'
 import staticRouter from './routes/static.routes'
 import databaseService from '~/services/database.services'
@@ -46,6 +47,7 @@ app.use('/brands', brandsRouter)
 app.use('/phones', phonesRouter)
 app.use('/carts', cartsRouter)
 app.use('/orders', ordersRouter)
+app.use('/invoices', invoicesRouter)
 app.use('/search', searchRouter)
 app.use('/static', staticRouter)
 

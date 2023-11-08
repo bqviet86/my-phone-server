@@ -7,7 +7,7 @@ import {
     DeleteCartReqParams,
     UpdateCartReqBody,
     UpdateCartReqParams
-} from '~/models/requests/Cart.request'
+} from '~/models/requests/Cart.requests'
 import { TokenPayload } from '~/models/requests/User.requests'
 import Cart from '~/models/schemas/Cart.schema'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'

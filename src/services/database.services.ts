@@ -10,6 +10,7 @@ import Phone from '~/models/schemas/Phone.schema'
 import Cart from '~/models/schemas/Cart.schema'
 import Payment from '~/models/schemas/Payments.schema'
 import Order from '~/models/schemas/Orders.schema'
+import Invoice from '~/models/schemas/Invoice.schema'
 
 config()
 
@@ -84,6 +85,10 @@ class DatabaseService {
 
     get orders(): Collection<Order> {
         return this.db.collection(process.env.DB_ORDERS_COLLECTION as string)
+    }
+
+    get invoices(): Collection<Invoice> {
+        return this.db.collection(process.env.DB_INVOICES_COLLECTION as string)
     }
 }
 

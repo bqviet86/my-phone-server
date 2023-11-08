@@ -10,7 +10,7 @@ import {
     UpdateOrderReqParams,
     UpdateOrderStatusReqBody,
     UpdateOrderStatusReqParams
-} from '~/models/requests/Order.request'
+} from '~/models/requests/Order.requests'
 import { TokenPayload } from '~/models/requests/User.requests'
 import Cart from '~/models/schemas/Cart.schema'
 import Order from '~/models/schemas/Orders.schema'

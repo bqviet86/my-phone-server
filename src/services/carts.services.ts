@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb'
 
 import { CartStatus } from '~/constants/enums'
 import { CARTS_MESSAGES } from '~/constants/messages'
-import { AddToCartReqBody, UpdateCartReqBody } from '~/models/requests/Cart.request'
+import { AddToCartReqBody, UpdateCartReqBody } from '~/models/requests/Cart.requests'
 import Cart from '~/models/schemas/Cart.schema'
 import PhoneOption from '~/models/schemas/PhoneOption.schema'
 import databaseService from './database.services'

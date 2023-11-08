@@ -7,11 +7,12 @@ import qs from 'qs'
 import crypto from 'crypto'
 
 import { CartStatus, OrderStatus, PaymentMethod, PaymentStatus, UserRole } from '~/constants/enums'
-import { CreateOrderReqBody } from '~/models/requests/Order.request'
+import { CreateOrderReqBody } from '~/models/requests/Order.requests'
 import Cart from '~/models/schemas/Cart.schema'
 import Order from '~/models/schemas/Orders.schema'
 import Payment from '~/models/schemas/Payments.schema'
 import databaseService from './database.services'
+import Invoice from '~/models/schemas/Invoice.schema'
 
 config()
 
@@ -527,6 +528,20 @@ class OrderService {
                 includeResultMetadata: false
             }
         )
+
+        if (order_status === OrderStatus.Processing) {
+            await databaseService.invoices.insertOne(
+                new Invoice({
+                    order_id: new ObjectId(order_id)
+                })
+            )
+        }
+
+        if (order_status === OrderStatus.Cancelled) {
+            await databaseService.invoices.deleteOne({
+                order_id: new ObjectId(order_id)
+            })
+        }
 
         return order as WithId<Order>
     }

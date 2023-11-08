@@ -15,7 +15,7 @@ import {
 } from '~/middlewares/carts.middlewares'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
-import { UpdateCartReqBody } from '~/models/requests/Cart.request'
+import { UpdateCartReqBody } from '~/models/requests/Cart.requests'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const cartsRouter = Router()
