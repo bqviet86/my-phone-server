@@ -7,12 +7,13 @@ import qs from 'qs'
 import crypto from 'crypto'
 
 import { CartStatus, OrderStatus, PaymentMethod, PaymentStatus, UserRole } from '~/constants/enums'
-import { CreateOrderReqBody } from '~/models/requests/Order.requests'
+import { ConfirmPaymentReqBody, CreateOrderReqBody, UpdateOrderReqBody } from '~/models/requests/Order.requests'
+import { DeliveryAddress } from '~/models/Others'
 import Cart from '~/models/schemas/Cart.schema'
 import Order from '~/models/schemas/Orders.schema'
 import Payment from '~/models/schemas/Payments.schema'
 import databaseService from './database.services'
-import Invoice from '~/models/schemas/Invoice.schema'
+import invoiceService from './invoices.services'
 
 config()
 
@@ -83,12 +84,14 @@ class OrderService {
         req,
         user_id,
         carts,
+        delivery_address,
         payment_method,
         payload
     }: {
         req: Request
         user_id: string
         carts: Cart[]
+        delivery_address: DeliveryAddress
         payment_method: number
         payload: CreateOrderReqBody
     }) {
@@ -99,7 +102,7 @@ class OrderService {
                 ...payload,
                 user_id: new ObjectId(user_id),
                 carts: cart_ids,
-                address: new ObjectId(payload.address),
+                address: delivery_address,
                 order_status:
                     payment_method === PaymentMethod.CreditCard
                         ? OrderStatus.PendingPayment
@@ -247,7 +250,7 @@ class OrderService {
         const orders = await databaseService.orders
             .aggregate<Order>([
                 {
-                    $match: $match
+                    $match
                 },
                 {
                     $lookup: {
@@ -260,19 +263,6 @@ class OrderService {
                 {
                     $unwind: {
                         path: '$user'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'addresses',
-                        localField: 'address',
-                        foreignField: '_id',
-                        as: 'address'
-                    }
-                },
-                {
-                    $unwind: {
-                        path: '$address'
                     }
                 },
                 {
@@ -332,9 +322,6 @@ class OrderService {
                         _id: '$_id',
                         user: {
                             $first: '$user'
-                        },
-                        address: {
-                            $first: '$address'
                         },
                         carts: {
                             $push: '$carts'
@@ -413,15 +400,27 @@ class OrderService {
 
     async updateOrder({
         order_id,
-        payment_method,
         carts,
+        delivery_address,
+        payment_method,
         payload
     }: {
         order_id: string
-        payment_method: number
         carts: Cart[]
-        payload: CreateOrderReqBody
+        delivery_address?: DeliveryAddress
+        payment_method: number
+        payload: UpdateOrderReqBody
     }) {
+        let old_address: DeliveryAddress | undefined = undefined
+
+        if (!delivery_address) {
+            const order = await databaseService.orders.findOne({
+                _id: new ObjectId(order_id)
+            })
+
+            old_address = order?.address
+        }
+
         const [order, payment] = await Promise.all([
             databaseService.orders.findOneAndUpdate(
                 {
@@ -431,7 +430,7 @@ class OrderService {
                     $set: {
                         ...payload,
                         carts: payload.carts.map((cart) => new ObjectId(cart)),
-                        address: new ObjectId(payload.address),
+                        address: delivery_address || old_address,
                         order_status:
                             payment_method === PaymentMethod.CreditCard
                                 ? OrderStatus.PendingPayment
@@ -476,20 +475,23 @@ class OrderService {
     async confirmPayment({
         req,
         order_id,
-        payment_method,
         carts,
+        delivery_address,
+        payment_method,
         payload
     }: {
         req: Request
         order_id: string
-        payment_method: number
         carts: Cart[]
-        payload: CreateOrderReqBody
+        delivery_address?: DeliveryAddress
+        payment_method: number
+        payload: ConfirmPaymentReqBody
     }) {
         const { order, payment } = await this.updateOrder({
             order_id,
-            payment_method,
             carts,
+            delivery_address,
+            payment_method,
             payload
         })
 
@@ -530,17 +532,11 @@ class OrderService {
         )
 
         if (order_status === OrderStatus.Processing) {
-            await databaseService.invoices.insertOne(
-                new Invoice({
-                    order_id: new ObjectId(order_id)
-                })
-            )
+            await invoiceService.createInvoice(order_id)
         }
 
         if (order_status === OrderStatus.Cancelled) {
-            await databaseService.invoices.deleteOne({
-                order_id: new ObjectId(order_id)
-            })
+            await invoiceService.deleteInvoice(order_id)
         }
 
         return order as WithId<Order>

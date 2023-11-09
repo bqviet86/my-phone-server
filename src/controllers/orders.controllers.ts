@@ -2,7 +2,10 @@ import { Request, Response } from 'express'
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 
 import { ORDERS_MESSAGES } from '~/constants/messages'
+import { DeliveryAddress } from '~/models/Others'
 import {
+    ConfirmPaymentReqBody,
+    ConfirmPaymentReqParams,
     CreateOrderReqBody,
     CreateOrderReqParams,
     GetAllOrderReqQuery,
@@ -23,11 +26,13 @@ export const createOrderController = async (
     const { payment_method } = req.params
     const { user_id } = req.decoded_authorization as TokenPayload
     const carts = req.carts as Cart[]
+    const delivery_address = req.delivery_address as DeliveryAddress
 
     const result = await orderService.createOrder({
         req,
         user_id,
         carts,
+        delivery_address,
         payment_method: Number(payment_method),
         payload: req.body
     })
@@ -76,11 +81,13 @@ export const updateOrderController = async (
 ) => {
     const { order_id, payment_method } = req.params
     const carts = req.carts as Cart[]
+    const delivery_address = req.delivery_address as DeliveryAddress
 
     const result = await orderService.updateOrder({
         order_id,
-        payment_method: Number(payment_method),
         carts,
+        delivery_address,
+        payment_method: Number(payment_method),
         payload: req.body
     })
 
@@ -91,17 +98,19 @@ export const updateOrderController = async (
 }
 
 export const confirmPaymentController = async (
-    req: Request<UpdateOrderReqParams, any, UpdateOrderReqBody>,
+    req: Request<ConfirmPaymentReqParams, any, ConfirmPaymentReqBody>,
     res: Response
 ) => {
     const { order_id, payment_method } = req.params
     const carts = req.carts as Cart[]
+    const delivery_address = req.delivery_address
 
     const result = await orderService.confirmPayment({
         req,
         order_id,
-        payment_method: Number(payment_method),
         carts,
+        delivery_address,
+        payment_method: Number(payment_method),
         payload: req.body
     })
 

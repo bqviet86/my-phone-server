@@ -188,19 +188,6 @@ export const orderIdSchema: ParamSchema = {
                     },
                     {
                         $lookup: {
-                            from: 'addresses',
-                            localField: 'address',
-                            foreignField: '_id',
-                            as: 'address'
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path: '$address'
-                        }
-                    },
-                    {
-                        $lookup: {
                             from: 'carts',
                             localField: 'carts',
                             foreignField: '_id',
@@ -256,9 +243,6 @@ export const orderIdSchema: ParamSchema = {
                             _id: '$_id',
                             user: {
                                 $first: '$user'
-                            },
-                            address: {
-                                $first: '$address'
                             },
                             carts: {
                                 $push: '$carts'

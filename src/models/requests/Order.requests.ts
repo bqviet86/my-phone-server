@@ -21,7 +21,18 @@ export interface UpdateOrderReqParams extends ParamsDictionary {
 
 export interface UpdateOrderReqBody {
     carts: string[]
-    address: string
+    address?: string
+    content: string
+}
+
+export interface ConfirmPaymentReqParams extends ParamsDictionary {
+    order_id: string
+    payment_method: string
+}
+
+export interface ConfirmPaymentReqBody {
+    carts: string[]
+    address?: string
     content: string
 }
 

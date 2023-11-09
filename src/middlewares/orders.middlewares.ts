@@ -74,31 +74,47 @@ const cartsSchema: ParamSchema = {
     }
 }
 
+const addressCustomFunction = async (value: string, { req }: { req: Request }, optional: boolean = false) => {
+    if (optional && !value) {
+        return true
+    }
+
+    if (!ObjectId.isValid(value)) {
+        throw new ErrorWithStatus({
+            message: ORDERS_MESSAGES.INVALID_ADDRESS_ID,
+            status: HTTP_STATUS.BAD_REQUEST
+        })
+    }
+
+    const { user_id } = (req as Request).decoded_authorization as TokenPayload
+    const address = await databaseService.addresses.findOne({
+        _id: new ObjectId(value),
+        user_id: new ObjectId(user_id)
+    })
+
+    if (address === null) {
+        throw new ErrorWithStatus({
+            message: ORDERS_MESSAGES.ADDRESS_NOT_FOUND,
+            status: HTTP_STATUS.NOT_FOUND
+        })
+    }
+
+    ;(req as Request).delivery_address = {
+        name: address.name,
+        email: address.email,
+        phone_number: address.phone_number,
+        specific_address: address.specific_address
+    }
+    ;(req as Request).address = address
+
+    return true
+}
+
 const addressSchema: ParamSchema = {
     trim: true,
     custom: {
         options: async (value: string, { req }) => {
-            if (!ObjectId.isValid(value)) {
-                throw new ErrorWithStatus({
-                    message: ORDERS_MESSAGES.INVALID_ADDRESS_ID,
-                    status: HTTP_STATUS.BAD_REQUEST
-                })
-            }
-
-            const { user_id } = (req as Request).decoded_authorization as TokenPayload
-            const address = await databaseService.addresses.findOne({
-                _id: new ObjectId(value),
-                user_id: new ObjectId(user_id)
-            })
-
-            if (address === null) {
-                throw new ErrorWithStatus({
-                    message: ORDERS_MESSAGES.ADDRESS_NOT_FOUND,
-                    status: HTTP_STATUS.NOT_FOUND
-                })
-            }
-
-            return true
+            return addressCustomFunction(value, { req: req as Request })
         }
     }
 }
@@ -145,7 +161,7 @@ export const getAllOrdersValidator = validate(
             order_status: {
                 optional: true,
                 custom: {
-                    options: async (value: string, { req }) => {
+                    options: async (value: string) => {
                         const orderStatus = Number(value)
 
                         if (value !== '' && !orderStatusValues.includes(orderStatus)) {
@@ -206,6 +222,33 @@ export const isAllowedToUpdateOrder = (req: Request, res: Response, next: NextFu
 
     next()
 }
+
+export const confirmPaymentValidator = validate(
+    checkSchema(
+        {
+            order_id: orderIdSchema,
+            payment_method: paymentMethodSchema,
+            carts: {
+                ...cartsSchema,
+                custom: {
+                    options: async (value: string[], { req }) => {
+                        return cartsCustomFunction(value, { req: req as Request }, CartStatus.Ordered)
+                    }
+                }
+            },
+            address: {
+                ...addressSchema,
+                custom: {
+                    options: async (value: string, { req }) => {
+                        return addressCustomFunction(value, { req: req as Request }, true)
+                    }
+                }
+            },
+            content: contentSchema
+        },
+        ['params', 'body']
+    )
+)
 
 export const updateOrderStatusValidator = validate(
     checkSchema(

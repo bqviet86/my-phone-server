@@ -209,5 +209,7 @@ export const ORDERS_MESSAGES = {
 }
 
 export const INVOICE_MESSAGES = {
-    GET_INVOICE_SUCCESS: 'Lấy hóa đơn thành công'
+    CREATE_INVOICE_SUCCESS: 'Tạo hóa đơn thành công',
+    GET_INVOICE_SUCCESS: 'Lấy hóa đơn thành công',
+    DELETE_INVOICE_SUCCESS: 'Xóa hóa đơn thành công'
 }

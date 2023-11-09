@@ -11,6 +11,7 @@ import {
 } from '~/controllers/orders.controllers'
 import { accessTokenValidator } from '~/middlewares/users.middlewares'
 import {
+    confirmPaymentValidator,
     createOrderValidator,
     getAllOrdersValidator,
     getOrderValidator,
@@ -87,13 +88,13 @@ ordersRouter.put(
  * Path: /confirm-payment/:order_id/:payment_method
  * Method: PUT
  * Header: { Authorization: Bearer <access_token> }
- * Params: UpdateOrderReqParams
- * Body: UpdateOrderReqBody
+ * Params: ConfirmPaymentReqParams
+ * Body: ConfirmPaymentReqBody
  */
 ordersRouter.put(
     '/confirm-payment/:order_id/:payment_method',
     accessTokenValidator,
-    updateOrderValidator,
+    confirmPaymentValidator,
     isAllowedToUpdateOrder,
     wrapRequestHandler(confirmPaymentController)
 )

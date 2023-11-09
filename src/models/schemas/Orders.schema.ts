@@ -1,12 +1,13 @@
 import { ObjectId } from 'mongodb'
 
 import { OrderStatus } from '~/constants/enums'
+import { DeliveryAddress } from '../Others'
 
 interface OrderType {
     _id?: ObjectId
     user_id: ObjectId
     carts: ObjectId[]
-    address: ObjectId
+    address: DeliveryAddress
     content: string
     order_status: OrderStatus
     created_at?: Date
@@ -17,7 +18,7 @@ export default class Order {
     _id?: ObjectId
     user_id: ObjectId
     carts: ObjectId[]
-    address: ObjectId
+    address: DeliveryAddress
     content: string
     order_status: OrderStatus
     created_at: Date
