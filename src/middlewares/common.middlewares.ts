@@ -244,6 +244,9 @@ export const orderIdSchema: ParamSchema = {
                             user: {
                                 $first: '$user'
                             },
+                            address: {
+                                $first: '$address'
+                            },
                             carts: {
                                 $push: '$carts'
                             },
