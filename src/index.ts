@@ -51,9 +51,11 @@ app.use('/invoices', invoicesRouter)
 app.use('/search', searchRouter)
 app.use('/static', staticRouter)
 
+app.get('/', (req, res) => {
+    res.send('Hello World')
+})
+
 // Error handler
 app.use(defaultErrorHandler)
 
 app.listen(port, () => console.log(`Listen on http://localhost:${port}`))
-
-export default app
