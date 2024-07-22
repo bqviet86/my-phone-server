@@ -1,7 +1,5 @@
 {
     "version": 2,
-    "buildCommand": "npm run build",
-    "devCommand": "npm start",
     "builds": [
         {
             "src": "src/index.ts",
@@ -11,7 +9,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/dist/index.js"
+            "dest": "src/index.ts"
         }
     ]
 }
