@@ -55,3 +55,5 @@ app.use('/static', staticRouter)
 app.use(defaultErrorHandler)
 
 app.listen(port, () => console.log(`Listen on http://localhost:${port}`))
+
+export default app
